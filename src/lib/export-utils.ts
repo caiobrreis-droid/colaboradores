@@ -98,6 +98,29 @@ export function exportToPDF(data: any[], columns: any[], title: string, filename
   doc.save(`${filename}.pdf`);
 }
 
-export function printReport() {
+async function waitForPrintAssets() {
+  if (document.fonts?.ready) {
+    await document.fonts.ready;
+  }
+
+  const images = Array.from(document.querySelectorAll<HTMLImageElement>('.print-only img'));
+  await Promise.all(images.map((image) => {
+    if (image.complete && image.naturalWidth > 0) return Promise.resolve();
+
+    return new Promise<void>((resolve) => {
+      const finish = () => resolve();
+      image.addEventListener('load', finish, { once: true });
+      image.addEventListener('error', finish, { once: true });
+      window.setTimeout(finish, 4000);
+    });
+  }));
+
+  await new Promise<void>((resolve) => {
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => resolve()));
+  });
+}
+
+export async function printReport() {
+  await waitForPrintAssets();
   window.print();
 }

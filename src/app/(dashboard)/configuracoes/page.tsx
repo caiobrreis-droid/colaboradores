@@ -9,15 +9,72 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { User, Shield, Settings2, Upload, Database, HardDriveDownload } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { loadEmployees } from '@/lib/employee-storage';
+import { DEFAULT_USER_PROFILE, fileToDataUrl, getProfileInitials, loadUserProfile, saveUserProfile } from '@/lib/profile-storage';
 import type { FuncionarioCompleto } from '@/types';
 
 export default function ConfiguracoesPage() {
   const timestamp = new Date().toLocaleString('pt-BR');
   const [employees, setEmployees] = useState<FuncionarioCompleto[]>([]);
-  useEffect(() => setEmployees(loadEmployees()), []);
+  const [name, setName] = useState(DEFAULT_USER_PROFILE.name);
+  const [email, setEmail] = useState(DEFAULT_USER_PROFILE.email);
+  const [avatarUrl, setAvatarUrl] = useState(DEFAULT_USER_PROFILE.avatarUrl);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setEmployees(loadEmployees());
+    const profile = loadUserProfile();
+    setName(profile.name);
+    setEmail(profile.email);
+    setAvatarUrl(profile.avatarUrl);
+  }, []);
+
   const neighborhoodCount = useMemo(() => new Set(employees.map((employee) => employee.endereco?.bairro).filter(Boolean)).size, [employees]);
+
+  const handlePhotoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    if (!['image/jpeg', 'image/png', 'image/gif'].includes(file.type)) {
+      toast.error('Selecione uma imagem JPG, PNG ou GIF.');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('A foto deve ter no máximo 2 MB.');
+      return;
+    }
+
+    try {
+      setAvatarUrl(await fileToDataUrl(file));
+      toast.success('Foto carregada. Clique em Salvar Alterações para confirmar.');
+    } catch (error: any) {
+      toast.error(error.message || 'Não foi possível carregar a foto.');
+    }
+  };
+
+  const handleSaveProfile = () => {
+    const normalizedName = name.trim();
+    if (!normalizedName) {
+      toast.error('Informe o nome completo.');
+      return;
+    }
+
+    try {
+      saveUserProfile({
+        name: normalizedName,
+        email,
+        role: DEFAULT_USER_PROFILE.role,
+        avatarUrl,
+      });
+      setName(normalizedName);
+      toast.success('Perfil atualizado com sucesso.');
+    } catch {
+      toast.error('Não foi possível salvar a foto. Tente usar uma imagem menor.');
+    }
+  };
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
@@ -51,10 +108,18 @@ export default function ConfiguracoesPage() {
             <CardContent className="space-y-6">
               <div className="flex items-center gap-6">
                 <Avatar className="h-24 w-24 border-4 border-white shadow-md">
-                  <AvatarFallback className="text-2xl bg-vessel-blue text-white font-semibold">AD</AvatarFallback>
+                  <AvatarImage src={avatarUrl} alt={`Foto de ${name}`} className="object-cover" />
+                  <AvatarFallback className="text-2xl bg-vessel-blue text-white font-semibold">{getProfileInitials(name)}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <Button variant="outline" className="mb-2">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/gif"
+                    className="hidden"
+                    onChange={handlePhotoChange}
+                  />
+                  <Button type="button" variant="outline" className="mb-2" onClick={() => fileInputRef.current?.click()}>
                     <Upload className="w-4 h-4 mr-2" />
                     Alterar Foto
                   </Button>
@@ -67,11 +132,11 @@ export default function ConfiguracoesPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="nome">Nome Completo</Label>
-                  <Input id="nome" defaultValue="Admin User" />
+                  <Input id="nome" value={name} onChange={(event) => setName(event.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" defaultValue="admin@vessel.com" readOnly className="bg-gray-50" />
+                  <Input id="email" type="email" value={email} readOnly className="bg-gray-50" />
                   <p className="text-xs text-gray-500 mt-1">O email não pode ser alterado.</p>
                 </div>
                 <div className="space-y-2 md:col-span-2">
@@ -83,7 +148,7 @@ export default function ConfiguracoesPage() {
               </div>
 
               <div className="flex justify-end pt-4">
-                <Button className="bg-vessel-blue hover:bg-blue-700 text-white">
+                <Button type="button" className="bg-vessel-blue hover:bg-blue-700 text-white" onClick={handleSaveProfile}>
                   Salvar Alterações
                 </Button>
               </div>

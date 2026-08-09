@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import Image from 'next/image';
 import { Building2, CalendarDays, House, Landmark, Printer, Star, UsersRound } from 'lucide-react';
 
-import { BrandLogo } from '@/components/shared/brand-logo';
 import { CATEGORIA_COLABORADOR_LABELS, ORGANIZATION_NAME } from '@/lib/constants';
 import type { CategoriaColaborador } from '@/types';
 
@@ -48,10 +48,9 @@ export function PrintTemplate({ data, title }: PrintTemplateProps) {
           .print-report-page:last-child { break-after: auto !important; page-break-after: auto !important; }
           .print-report-sheet { position: relative !important; height: 100% !important; overflow: hidden !important; border-radius: 2.2mm !important; background: #ffffff !important; }
           .print-report-header { display: grid !important; grid-template-columns: 31% 43% 26% !important; height: 31mm !important; border-bottom: 1px solid #d8e2f0 !important; background: linear-gradient(105deg, #ffffff 0%, #ffffff 75%, #f6f9fd 100%) !important; }
-          .print-report-brand-zone { position: relative !important; display: flex !important; flex-direction: column !important; justify-content: center !important; overflow: hidden !important; padding: 4mm 12mm 4mm 7mm !important; border-bottom-right-radius: 19mm !important; border-bottom: 1.1mm solid #16d76e !important; background: linear-gradient(135deg, #0758e3 0%, #0636a5 100%) !important; }
-          .print-report-logo { width: 50mm !important; max-width: 50mm !important; background: #0640c2 !important; }
-          .print-report-logo + .print-report-product { margin-top: 0.7mm !important; }
-          .print-report-product { color: #ffffff !important; font-size: 5.7pt !important; font-weight: 700 !important; letter-spacing: 0.22em !important; text-align: center !important; text-transform: uppercase !important; }
+          .print-report-brand-zone { position: relative !important; display: flex !important; align-items: center !important; justify-content: center !important; overflow: hidden !important; isolation: isolate !important; padding: 2.6mm 7mm 2.6mm 5mm !important; border-bottom-right-radius: 19mm !important; border-bottom: 1.1mm solid #16d76e !important; background: #0756df !important; }
+          .print-report-logo { position: relative !important; width: 72mm !important; max-width: 100% !important; height: 23mm !important; overflow: hidden !important; background: transparent !important; }
+          .print-report-logo img { object-fit: cover !important; object-position: center 50% !important; mix-blend-mode: lighten !important; }
           .print-report-heading { display: flex !important; flex-direction: column !important; justify-content: center !important; padding: 3mm 7mm !important; }
           .print-report-title { margin: 0 !important; color: #0739a5 !important; font-size: 16pt !important; font-weight: 800 !important; line-height: 1.1 !important; text-transform: uppercase !important; }
           .print-report-org { margin: 1.2mm 0 0 !important; color: #64748b !important; font-size: 9pt !important; }
@@ -100,8 +99,16 @@ export function PrintTemplate({ data, title }: PrintTemplateProps) {
           <div className="print-report-sheet">
             <header className="print-report-header">
               <div className="print-report-brand-zone">
-                <BrandLogo className="print-report-logo" />
-                <div className="print-report-product">Gestão de Colaboradores</div>
+                <div className="print-report-logo">
+                  <Image
+                    src="/logo-vessel.png"
+                    alt="VESSEL — Sistema de Campanha"
+                    fill
+                    priority
+                    unoptimized
+                    sizes="72mm"
+                  />
+                </div>
               </div>
               <div className="print-report-heading">
                 <h1 className="print-report-title">{title}</h1>

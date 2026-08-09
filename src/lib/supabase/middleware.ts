@@ -3,7 +3,23 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { isSupabaseConfigured } from '@/lib/supabase/config'
 
 export async function updateSession(request: NextRequest) {
+  const isPublicRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/auth')
+  const isStaticFile = request.nextUrl.pathname.startsWith('/_next') || request.nextUrl.pathname.startsWith('/favicon.ico') || request.nextUrl.pathname.includes('/logo-vessel.png')
+  const isDemoMode = request.cookies.get('vessel_demo_auth')?.value === 'true';
+
   if (!isSupabaseConfigured()) {
+    if (!isPublicRoute && !isStaticFile && !isDemoMode) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+
+    if (isDemoMode && isPublicRoute) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/'
+      return NextResponse.redirect(url)
+    }
+
     return NextResponse.next({ request })
   }
 
@@ -39,11 +55,6 @@ export async function updateSession(request: NextRequest) {
   } catch (e) {
     user = null;
   }
-
-  const isPublicRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/auth')
-  const isStaticFile = request.nextUrl.pathname.startsWith('/_next') || request.nextUrl.pathname.startsWith('/favicon.ico') || request.nextUrl.pathname.includes('/logo-vessel.png')
-
-  const isDemoMode = request.cookies.get('vessel_demo_auth')?.value === 'true';
 
   if (!user && !isPublicRoute && !isStaticFile && !isDemoMode) {
     const url = request.nextUrl.clone()

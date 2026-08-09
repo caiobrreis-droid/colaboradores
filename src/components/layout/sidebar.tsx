@@ -22,6 +22,9 @@ import { APP_NAME, APP_SUBTITLE } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { useUserProfile } from '@/hooks/use-user-profile';
+import { signOutFromSystem } from '@/lib/auth-actions';
+import { getProfileInitials } from '@/lib/profile-storage';
 import Image from 'next/image';
 
 interface SidebarProps {
@@ -45,6 +48,7 @@ const navItems = [
 export function Sidebar({ collapsed = false, onToggle, className }: SidebarProps) {
   const pathname = usePathname();
   const [isHovered, setIsHovered] = React.useState(false);
+  const profile = useUserProfile();
 
   const isCollapsed = collapsed && !isHovered;
 
@@ -138,8 +142,8 @@ export function Sidebar({ collapsed = false, onToggle, className }: SidebarProps
       <div className="border-t border-white/10 p-4 shrink-0">
         <div className={cn('flex items-center gap-3', isCollapsed ? 'justify-center' : '')}>
           <Avatar className="h-10 w-10 border-2 border-white/10">
-            <AvatarImage src="" />
-            <AvatarFallback className="bg-[#0057FF] text-white">U</AvatarFallback>
+            <AvatarImage src={profile.avatarUrl} alt={`Foto de ${profile.name}`} className="object-cover" />
+            <AvatarFallback className="bg-[#0057FF] text-white">{getProfileInitials(profile.name)}</AvatarFallback>
           </Avatar>
 
           <div
@@ -148,14 +152,22 @@ export function Sidebar({ collapsed = false, onToggle, className }: SidebarProps
               isCollapsed ? 'w-0 opacity-0' : 'w-full opacity-100'
             )}
           >
-            <span className="text-sm font-medium text-white">Usuário</span>
+            <span className="max-w-[145px] truncate text-sm font-medium text-white">{profile.name}</span>
             <Badge variant="secondary" className="mt-0.5 h-4 w-fit bg-[#00C853]/20 text-[10px] text-[#00C853] hover:bg-[#00C853]/30">
-              Admin
+              {profile.role}
             </Badge>
           </div>
 
           {!isCollapsed && (
-            <Button variant="ghost" size="icon" className="ml-auto h-8 w-8 text-slate-400 hover:text-white hover:bg-white/10">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="ml-auto h-8 w-8 text-slate-400 hover:text-white hover:bg-white/10"
+              onClick={() => void signOutFromSystem()}
+              aria-label="Sair do sistema"
+              title="Sair do sistema"
+            >
               <LogOut size={16} />
             </Button>
           )}

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Menu, Search, Bell, Settings, LogOut, User as UserIcon } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -14,7 +14,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { useUserProfile } from '@/hooks/use-user-profile';
+import { signOutFromSystem } from '@/lib/auth-actions';
+import { getProfileInitials } from '@/lib/profile-storage';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -22,6 +24,8 @@ interface HeaderProps {
 
 export function Header({ onMenuToggle }: HeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const profile = useUserProfile();
   const routeName = pathname.split('/')[1] || '';
   const routeTitles: Record<string, string> = {
     funcionarios: 'Colaboradores',
@@ -97,12 +101,12 @@ export function Header({ onMenuToggle }: HeaderProps) {
               <Button variant="ghost" className="-m-1.5 flex items-center p-1.5 gap-x-3 rounded-full hover:bg-gray-50">
                 <span className="sr-only">Abrir menu do usuário</span>
                 <Avatar className="h-9 w-9 border border-gray-200 shadow-sm">
-                  <AvatarImage src="" />
-                  <AvatarFallback className="bg-[#001233] text-white">U</AvatarFallback>
+                  <AvatarImage src={profile.avatarUrl} alt={`Foto de ${profile.name}`} className="object-cover" />
+                  <AvatarFallback className="bg-[#001233] text-white">{getProfileInitials(profile.name)}</AvatarFallback>
                 </Avatar>
                 <span className="hidden lg:flex lg:items-center">
                   <span className="text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
-                    Usuário
+                    {profile.name}
                   </span>
                 </span>
               </Button>
@@ -110,21 +114,21 @@ export function Header({ onMenuToggle }: HeaderProps) {
             <DropdownMenuContent align="end" className="w-56 mt-2">
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none text-[#001233]">Usuário Demo</p>
-                  <p className="text-xs leading-none text-muted-foreground">usuario@vessel.com</p>
+                  <p className="text-sm font-medium leading-none text-[#001233]">{profile.name}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{profile.email}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer text-gray-700">
+              <DropdownMenuItem className="cursor-pointer text-gray-700" onSelect={() => router.push('/configuracoes')}>
                 <UserIcon className="mr-2 h-4 w-4" />
                 <span>Meu Perfil</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer text-gray-700">
+              <DropdownMenuItem className="cursor-pointer text-gray-700" onSelect={() => router.push('/configuracoes')}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Configurações</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50">
+              <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50" onSelect={() => void signOutFromSystem()}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Sair do Sistema</span>
               </DropdownMenuItem>
