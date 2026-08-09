@@ -13,8 +13,6 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { isSupabaseConfigured } from '@/lib/supabase/config';
-import { createClient } from '@/lib/supabase/client';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'E-mail inválido.' }),
@@ -36,14 +34,15 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
-      if (isSupabaseConfigured()) {
-        const { error } = await createClient().auth.signInWithPassword({ email: data.email, password: data.password });
-        if (error) throw error;
-      } else {
-        document.cookie = 'vessel_demo_auth=true; path=/; max-age=86400';
-      }
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.message || 'Não foi possível entrar.');
       toast.success('Login realizado com sucesso!');
-      router.push('/');
+      router.replace('/');
       router.refresh();
     } catch (error: any) {
       toast.error(error.message || 'Erro ao realizar login. Verifique suas credenciais.');

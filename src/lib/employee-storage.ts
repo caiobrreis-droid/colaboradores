@@ -211,6 +211,76 @@ export function upsertEmployee(employee: FuncionarioCompleto) {
   return employee;
 }
 
+async function responsePayload(response: Response) {
+  return response.json().catch(() => ({}));
+}
+
+function isLocalFallback(response: Response, payload: { code?: string }) {
+  return response.status === 503 && payload.code === 'DATABASE_NOT_CONFIGURED';
+}
+
+function broadcastEmployeeChange() {
+  if (isBrowser()) window.dispatchEvent(new CustomEvent(EMPLOYEE_STORAGE_EVENT));
+}
+
+export async function fetchEmployees(): Promise<FuncionarioCompleto[]> {
+  const response = await fetch('/api/colaboradores', { cache: 'no-store' });
+  const payload = await responsePayload(response);
+  if (response.ok) return payload.employees || [];
+  if (isLocalFallback(response, payload)) return loadEmployees();
+  throw new Error(payload.message || 'Não foi possível carregar os colaboradores.');
+}
+
+export async function fetchEmployee(id: string): Promise<FuncionarioCompleto | undefined> {
+  const response = await fetch(`/api/colaboradores/${encodeURIComponent(id)}`, { cache: 'no-store' });
+  const payload = await responsePayload(response);
+  if (response.ok) return payload.employee;
+  if (response.status === 404) return undefined;
+  if (isLocalFallback(response, payload)) return findEmployee(id);
+  throw new Error(payload.message || 'Não foi possível carregar o colaborador.');
+}
+
+export async function persistEmployee(employee: FuncionarioCompleto): Promise<FuncionarioCompleto> {
+  const existing = await fetch(`/api/colaboradores/${encodeURIComponent(employee.id)}`, { cache: 'no-store' });
+  const existingPayload = await responsePayload(existing);
+  if (isLocalFallback(existing, existingPayload)) return upsertEmployee(employee);
+
+  const isExisting = existing.ok;
+  const response = await fetch(isExisting ? `/api/colaboradores/${encodeURIComponent(employee.id)}` : '/api/colaboradores', {
+    method: isExisting ? 'PATCH' : 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(employee),
+  });
+  const payload = await responsePayload(response);
+  if (!response.ok) throw new Error(payload.message || 'Não foi possível salvar o colaborador.');
+  broadcastEmployeeChange();
+  return payload.employee;
+}
+
+export async function removeEmployeeRecord(id: string): Promise<void> {
+  const response = await fetch(`/api/colaboradores/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  const payload = await responsePayload(response);
+  if (isLocalFallback(response, payload)) {
+    deleteEmployee(id);
+    return;
+  }
+  if (!response.ok) throw new Error(payload.message || 'Não foi possível excluir o colaborador.');
+  broadcastEmployeeChange();
+}
+
+export async function changeEmployeeNetworkStatus(id: string, status: StatusRede['status']): Promise<FuncionarioCompleto | undefined> {
+  const response = await fetch(`/api/colaboradores/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  const payload = await responsePayload(response);
+  if (isLocalFallback(response, payload)) return setEmployeeNetworkStatus(id, status);
+  if (!response.ok) throw new Error(payload.message || 'Não foi possível alterar a situação do colaborador.');
+  broadcastEmployeeChange();
+  return payload.employee;
+}
+
 export function employeeAddress(employee: FuncionarioCompleto) {
   const address = employee.endereco;
   if (!address) return '';

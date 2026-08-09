@@ -2,34 +2,49 @@
 
 Sistema de gestão de colaboradores organizado por Gabinete, Casa, Vice-Presidência e PMBV.
 
+## Arquitetura
+
+Todo o ambiente de produção fica no Railway:
+
+- Aplicação: Next.js.
+- Banco de dados: PostgreSQL.
+- Login: sessões persistentes e senhas protegidas por hash.
+- Fotos: Railway Storage Bucket privado.
+- Código-fonte: GitHub conectado ao Railway.
+
 ## Executar localmente
 
-1. Instale o Node.js 20 ou superior.
+1. Instale o Node.js 20.9 ou superior.
 2. Copie `.env.local.example` para `.env.local`.
 3. Instale as dependências com `npm install`.
-4. Execute `npm run dev` para desenvolvimento.
-5. Para testar com desempenho de produção, execute `npm run build` e depois `npm start`.
+4. Execute `npm run db:migrate` para preparar o PostgreSQL.
+5. Execute `npm run dev`.
 
-O endereço padrão é `http://localhost:3000`.
+Sem `DATABASE_URL`, o sistema usa o modo local apenas para desenvolvimento. Em produção, configure o PostgreSQL e o bucket.
 
-## Banco de dados e autenticação
+## Variáveis do Railway
 
-O projeto está preparado para Supabase. Configure estas variáveis:
+Na aplicação Next.js, adicione estas variáveis usando referências aos serviços PostgreSQL e Storage Bucket do mesmo projeto:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+DATABASE_URL=
+ADMIN_NAME=Administrador
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
+BUCKET=
+ENDPOINT=
+ACCESS_KEY_ID=
+SECRET_ACCESS_KEY=
+REGION=auto
 ```
 
-Nunca envie a chave `SUPABASE_SERVICE_ROLE_KEY` ao GitHub. Ela deve ser cadastrada somente no ambiente de hospedagem.
+`ADMIN_PASSWORD` precisa ter no mínimo 8 caracteres. O administrador é criado somente na primeira migração; novos deploys não redefinem sua senha.
 
-As migrações estão em `supabase/migrations` e devem ser aplicadas em ordem. Enquanto o Supabase não estiver configurado, a área de usuários usa armazenamento local do navegador para não perder os testes feitos no mesmo computador.
+## Publicação no Railway
 
-## Publicação
+1. Crie um projeto a partir do repositório GitHub.
+2. Adicione PostgreSQL e Storage Bucket ao mesmo projeto.
+3. Vincule as variáveis acima por referência na aplicação.
+4. Gere um domínio público para a aplicação.
 
-- Código: GitHub.
-- Banco e autenticação: Supabase.
-- Aplicação Next.js: Vercel.
-
-Na Vercel, cadastre as três variáveis de ambiente e faça o primeiro deploy após aplicar as migrações no Supabase.
+O arquivo `railway.json` executa a migração antes de cada versão entrar no ar e valida `/api/health` antes de trocar o tráfego.

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, ExternalLink, Instagram, Facebook, Video, Share2 } from "lucide-react";
 import { REDE_SOCIAL_OPTIONS, TIPO_PUBLICACAO_OPTIONS } from "@/lib/constants";
-import { StatusBadge } from "@/components/funcionarios/status-badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const publications: Array<{ id: string; data: string; funcionario: string; rede: string; tipo: string; status: string; link: string; obs: string }> = [];

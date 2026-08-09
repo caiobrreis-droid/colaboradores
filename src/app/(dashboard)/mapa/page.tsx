@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CATEGORIA_COLABORADOR_LABELS } from '@/lib/constants';
-import { employeeAddress, loadEmployees } from '@/lib/employee-storage';
+import { employeeAddress, fetchEmployees } from '@/lib/employee-storage';
 import type { FuncionarioCompleto } from '@/types';
 
 export default function MapaPage() {
@@ -18,9 +18,10 @@ export default function MapaPage() {
   const [selectedId, setSelectedId] = useState('');
 
   useEffect(() => {
-    const loaded = loadEmployees();
-    setEmployees(loaded);
-    setSelectedId(loaded[0]?.id || '');
+    void fetchEmployees().then((loaded) => {
+      setEmployees(loaded);
+      setSelectedId(loaded[0]?.id || '');
+    });
   }, []);
 
   const filteredEmployees = useMemo(() => {

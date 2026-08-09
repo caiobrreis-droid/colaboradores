@@ -6,7 +6,7 @@ import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
 import { MobileNav } from '@/components/layout/mobile-nav';
 import { SplashScreen } from '@/components/layout/splash-screen';
-// import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function DashboardLayout({
   children,
@@ -14,9 +14,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  // const { user, isLoading } = useAuth(); // Assuming this exists
-  const isLoading = false; // Mocking for now
-  const user = { id: '1' }; // Mocking for now
+  const { user, loading: isLoading } = useAuth();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);

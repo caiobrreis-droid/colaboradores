@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { loadEmployees, setEmployeeNetworkStatus } from '@/lib/employee-storage';
+import { changeEmployeeNetworkStatus, fetchEmployees } from '@/lib/employee-storage';
 import type { FuncionarioCompleto } from '@/types';
 
 function networkFor(employee: FuncionarioCompleto, name: string) {
@@ -20,7 +20,7 @@ function networkFor(employee: FuncionarioCompleto, name: string) {
 export default function RedesSociaisPage() {
   const [employees, setEmployees] = useState<FuncionarioCompleto[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  useEffect(() => setEmployees(loadEmployees()), []);
+  useEffect(() => { void fetchEmployees().then(setEmployees); }, []);
 
   const rows = useMemo(() => employees.map((employee) => ({
     employee,
@@ -36,11 +36,15 @@ export default function RedesSociaisPage() {
     none: employees.filter((employee) => !employee.redes_sociais?.length).length,
   };
 
-  const updateStatus = (employee: FuncionarioCompleto, status: 'positivado' | 'negativado' | 'nao_avaliado') => {
-    setEmployeeNetworkStatus(employee.id, status);
-    setEmployees(loadEmployees());
-    const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'neutro' };
-    toast.success(`${employee.nome} ficou ${labels[status]}.`);
+  const updateStatus = async (employee: FuncionarioCompleto, status: 'positivado' | 'negativado' | 'nao_avaliado') => {
+    try {
+      const updated = await changeEmployeeNetworkStatus(employee.id, status);
+      if (updated) setEmployees((current) => current.map((item) => item.id === updated.id ? updated : item));
+      const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'neutro' };
+      toast.success(`${employee.nome} ficou ${labels[status]}.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível alterar a situação.');
+    }
   };
 
   return (

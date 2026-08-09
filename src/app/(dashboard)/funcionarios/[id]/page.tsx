@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CATEGORIA_COLABORADOR_LABELS } from '@/lib/constants';
-import { deleteEmployee, employeeAddress, findEmployee, setEmployeeNetworkStatus } from '@/lib/employee-storage';
+import { changeEmployeeNetworkStatus, employeeAddress, fetchEmployee, removeEmployeeRecord } from '@/lib/employee-storage';
 import type { FuncionarioCompleto } from '@/types';
 
 export default function EmployeeProfilePage() {
@@ -34,8 +34,9 @@ export default function EmployeeProfilePage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   useEffect(() => {
-    setEmployee(findEmployee(id));
-    setLoaded(true);
+    void fetchEmployee(id)
+      .then(setEmployee)
+      .finally(() => setLoaded(true));
   }, [id]);
 
   const address = useMemo(() => employee ? employeeAddress(employee) : '', [employee]);
@@ -56,17 +57,25 @@ export default function EmployeeProfilePage() {
   const initials = employee.nome.split(' ').filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
   const status = employee.status_redes?.[0]?.status || 'nao_avaliado';
 
-  const confirmDelete = () => {
-    deleteEmployee(employee.id);
-    toast.success(`${employee.nome} foi excluído do sistema.`);
-    router.push('/funcionarios');
+  const confirmDelete = async () => {
+    try {
+      await removeEmployeeRecord(employee.id);
+      toast.success(`${employee.nome} foi excluído do sistema.`);
+      router.push('/funcionarios');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível excluir o colaborador.');
+    }
   };
 
-  const updateStatus = (newStatus: 'positivado' | 'negativado' | 'nao_avaliado') => {
-    const updated = setEmployeeNetworkStatus(employee.id, newStatus);
-    if (updated) setEmployee(updated);
-    const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'neutro' };
-    toast.success(`${employee.nome} ficou ${labels[newStatus]}.`);
+  const updateStatus = async (newStatus: 'positivado' | 'negativado' | 'nao_avaliado') => {
+    try {
+      const updated = await changeEmployeeNetworkStatus(employee.id, newStatus);
+      if (updated) setEmployee(updated);
+      const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'neutro' };
+      toast.success(`${employee.nome} ficou ${labels[newStatus]}.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível alterar a situação.');
+    }
   };
 
   return (

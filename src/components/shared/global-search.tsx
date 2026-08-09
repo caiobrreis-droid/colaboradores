@@ -6,7 +6,7 @@ import { Instagram, MapPin, Search, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { loadEmployees } from '@/lib/employee-storage';
+import { fetchEmployees } from '@/lib/employee-storage';
 import type { FuncionarioCompleto } from '@/types';
 
 export function GlobalSearch() {
@@ -26,7 +26,7 @@ export function GlobalSearch() {
   }, []);
 
   useEffect(() => {
-    if (open) setEmployees(loadEmployees());
+    if (open) void fetchEmployees().then(setEmployees);
   }, [open]);
 
   const neighborhoods = useMemo(() => [...new Set(employees.map((employee) => employee.endereco?.bairro).filter(Boolean) as string[])], [employees]);

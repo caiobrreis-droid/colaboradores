@@ -134,7 +134,7 @@ export function PrintTemplate({ data, title }: PrintTemplateProps) {
                       return (
                         <tr key={`${item.nome}-${absoluteIndex}`}>
                           <td>{absoluteIndex + 1}</td>
-                          <td><span className="print-report-person"><span className="print-report-avatar">{item.foto_url ? <img src={item.foto_url} alt="" /> : initials}</span><span>{item.nome}</span></span></td>
+                          <td><span className="print-report-person"><span className="print-report-avatar">{item.foto_url ? <Image src={item.foto_url} alt="" width={28} height={28} unoptimized /> : initials}</span><span>{item.nome}</span></span></td>
                           <td>{item.cargo || '—'}</td>
                           <td><span className={`print-category ${category}`}><CategoryIcon />{CATEGORIA_COLABORADOR_LABELS[category] || item.categoria}</span></td>
                           <td>{item.bairro || '—'}</td>

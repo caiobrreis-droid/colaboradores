@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { User, Shield, Settings2, Upload, Database, HardDriveDownload } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { loadEmployees } from '@/lib/employee-storage';
+import { fetchEmployees } from '@/lib/employee-storage';
 import { DEFAULT_USER_PROFILE, fileToDataUrl, getProfileInitials, loadUserProfile, saveUserProfile } from '@/lib/profile-storage';
 import type { FuncionarioCompleto } from '@/types';
 
@@ -21,14 +21,30 @@ export default function ConfiguracoesPage() {
   const [name, setName] = useState(DEFAULT_USER_PROFILE.name);
   const [email, setEmail] = useState(DEFAULT_USER_PROFILE.email);
   const [avatarUrl, setAvatarUrl] = useState(DEFAULT_USER_PROFILE.avatarUrl);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setEmployees(loadEmployees());
-    const profile = loadUserProfile();
-    setName(profile.name);
-    setEmail(profile.email);
-    setAvatarUrl(profile.avatarUrl);
+    void fetchEmployees().then(setEmployees).catch(() => setEmployees([]));
+    const loadProfile = async () => {
+      try {
+        const response = await fetch('/api/perfil', { cache: 'no-store' });
+        if (response.ok) {
+          const payload = await response.json();
+          setName(payload.user.nome);
+          setEmail(payload.user.email);
+          setAvatarUrl(payload.user.avatarUrl || '');
+          return;
+        }
+      } catch {
+        // Usa o perfil local enquanto o Railway não estiver configurado.
+      }
+      const profile = loadUserProfile();
+      setName(profile.name);
+      setEmail(profile.email);
+      setAvatarUrl(profile.avatarUrl);
+    };
+    void loadProfile();
   }, []);
 
   const neighborhoodCount = useMemo(() => new Set(employees.map((employee) => employee.endereco?.bairro).filter(Boolean)).size, [employees]);
@@ -55,24 +71,45 @@ export default function ConfiguracoesPage() {
     }
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     const normalizedName = name.trim();
     if (!normalizedName) {
       toast.error('Informe o nome completo.');
       return;
     }
 
+    setIsSavingProfile(true);
     try {
-      saveUserProfile({
+      let savedProfile = {
         name: normalizedName,
         email,
         role: DEFAULT_USER_PROFILE.role,
         avatarUrl,
+      };
+      const response = await fetch('/api/perfil', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: normalizedName, avatarUrl }),
       });
+      const payload = await response.json();
+      if (response.ok) {
+        savedProfile = {
+          name: payload.user.nome,
+          email: payload.user.email,
+          role: payload.user.permissao,
+          avatarUrl: payload.user.avatarUrl || '',
+        };
+        setAvatarUrl(savedProfile.avatarUrl);
+      } else if (!(response.status === 503 && payload.code === 'DATABASE_NOT_CONFIGURED')) {
+        throw new Error(payload.message || 'Não foi possível salvar o perfil.');
+      }
+      saveUserProfile(savedProfile);
       setName(normalizedName);
       toast.success('Perfil atualizado com sucesso.');
-    } catch {
-      toast.error('Não foi possível salvar a foto. Tente usar uma imagem menor.');
+    } catch (error: any) {
+      toast.error(error.message || 'Não foi possível salvar a foto. Tente usar uma imagem menor.');
+    } finally {
+      setIsSavingProfile(false);
     }
   };
 
@@ -148,8 +185,8 @@ export default function ConfiguracoesPage() {
               </div>
 
               <div className="flex justify-end pt-4">
-                <Button type="button" className="bg-vessel-blue hover:bg-blue-700 text-white" onClick={handleSaveProfile}>
-                  Salvar Alterações
+                <Button type="button" className="bg-vessel-blue hover:bg-blue-700 text-white" onClick={handleSaveProfile} disabled={isSavingProfile}>
+                  {isSavingProfile ? 'Salvando...' : 'Salvar Alterações'}
                 </Button>
               </div>
             </CardContent>

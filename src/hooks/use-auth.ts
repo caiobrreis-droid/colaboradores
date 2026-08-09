@@ -1,87 +1,72 @@
-'use client'
+'use client';
 
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@/types'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+interface AuthenticatedUser {
+  id: string;
+  nome: string;
+  email: string;
+  permissao: 'Administrador' | 'Operador' | 'Visualizador';
+  ativo: boolean;
+  avatarUrl: string;
+}
 
 export function useAuth() {
-  const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
-  const supabase = createClient()
+  const [user, setUser] = useState<AuthenticatedUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const refreshSession = useCallback(async () => {
+    try {
+      const response = await fetch('/api/auth/session', { cache: 'no-store' });
+      if (!response.ok) {
+        setUser(null);
+        return null;
+      }
+      const payload = await response.json();
+      setUser(payload.user);
+      return payload.user as AuthenticatedUser;
+    } catch {
+      setUser(null);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-
-      if (user) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single()
-
-        if (profileData) {
-          setProfile(profileData as User)
-        }
-      }
-      setLoading(false)
-    }
-
-    getUser()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setUser(session?.user ?? null)
-
-        if (session?.user) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single()
-
-          if (profileData) {
-            setProfile(profileData as User)
-          }
-        } else {
-          setProfile(null)
-        }
-        setLoading(false)
-      }
-    )
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [])
+    void refreshSession();
+  }, [refreshSession]);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-    if (error) throw error
-    router.refresh()
-  }
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.message || 'Não foi possível entrar.');
+    await refreshSession();
+    router.replace('/');
+    router.refresh();
+  };
 
   const signOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/login')
-    router.refresh()
-  }
+    await fetch('/api/auth/logout', { method: 'POST' });
+    setUser(null);
+    window.location.replace('/login');
+  };
 
   return {
     user,
-    profile,
+    profile: user,
     loading,
     signIn,
     signOut,
-    isAdmin: profile?.role === 'admin',
-    isOperator: profile?.role === 'operator' || profile?.role === 'admin',
-    isViewer: profile?.role === 'viewer' || profile?.role === 'operator' || profile?.role === 'admin',
-  }
+    refreshSession,
+    isAdmin: user?.permissao === 'Administrador',
+    isOperator: user?.permissao === 'Operador' || user?.permissao === 'Administrador',
+    isViewer: Boolean(user),
+  };
 }

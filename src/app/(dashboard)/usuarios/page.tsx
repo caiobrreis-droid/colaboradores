@@ -37,8 +37,6 @@ const STORAGE_KEY = 'vessel:usuarios:v1';
 
 const DEFAULT_USERS: StoredUser[] = [
   { id: '1', nome: 'Admin User', email: 'admin@vessel.com', permissao: 'Administrador', ativo: true, criadoEm: '01/08/2026' },
-  { id: '2', nome: 'Operador User', email: 'operador@vessel.com', permissao: 'Operador', ativo: true, criadoEm: '02/08/2026' },
-  { id: '3', nome: 'Viewer User', email: 'viewer@vessel.com', permissao: 'Visualizador', ativo: false, criadoEm: '05/08/2026' },
 ];
 
 const EMPTY_FORM: UserFormState = {
@@ -51,7 +49,7 @@ const EMPTY_FORM: UserFormState = {
 
 export default function UsuariosPage() {
   const [users, setUsers] = useState<StoredUser[]>([]);
-  const [storageMode, setStorageMode] = useState<'local' | 'supabase'>('local');
+  const [storageMode, setStorageMode] = useState<'local' | 'railway'>('local');
   const [isHydrated, setIsHydrated] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -67,7 +65,7 @@ export default function UsuariosPage() {
         if (response.ok) {
           const payload = await response.json();
           setUsers(payload.users);
-          setStorageMode('supabase');
+          setStorageMode('railway');
           return;
         }
 
@@ -127,8 +125,8 @@ export default function UsuariosPage() {
     const nome = form.nome.trim();
     const email = form.email.trim().toLowerCase();
 
-    if (!nome || !email || (!editingUser && form.senha.length < 6)) {
-      toast.error('Informe nome, e-mail e uma senha com pelo menos 6 caracteres.');
+    if (!nome || !email || (!editingUser && form.senha.length < 8)) {
+      toast.error('Informe nome, e-mail e uma senha com pelo menos 8 caracteres.');
       return;
     }
 
@@ -141,7 +139,7 @@ export default function UsuariosPage() {
     setIsSaving(true);
 
     try {
-      if (storageMode === 'supabase') {
+      if (storageMode === 'railway') {
         const response = await fetch('/api/usuarios', {
           method: editingUser ? 'PATCH' : 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -192,7 +190,7 @@ export default function UsuariosPage() {
     if (!userToDelete) return;
 
     try {
-      if (storageMode === 'supabase') {
+      if (storageMode === 'railway') {
         const response = await fetch(`/api/usuarios?id=${encodeURIComponent(userToDelete)}`, { method: 'DELETE' });
         const payload = await response.json();
         if (!response.ok) throw new Error(payload.message || 'Não foi possível excluir o usuário.');
@@ -246,8 +244,8 @@ export default function UsuariosPage() {
               {!editingUser && (
                 <div className="grid gap-2">
                   <Label htmlFor="senha">Senha</Label>
-                  <Input id="senha" type="password" value={form.senha} onChange={(event) => setForm({ ...form, senha: event.target.value })} placeholder="Mínimo de 6 caracteres" />
-                  <p className="text-xs text-muted-foreground">A senha não é armazenada localmente. A autenticação será ativada junto com o banco hospedado.</p>
+                  <Input id="senha" type="password" value={form.senha} onChange={(event) => setForm({ ...form, senha: event.target.value })} placeholder="Mínimo de 8 caracteres" />
+                  <p className="text-xs text-muted-foreground">No Railway, a senha é protegida por hash antes de ser salva no PostgreSQL.</p>
                 </div>
               )}
               <div className="grid gap-2">
@@ -279,12 +277,12 @@ export default function UsuariosPage() {
         </Dialog>
       </div>
 
-      <div className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-sm ${storageMode === 'supabase' ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800'}`}>
-        {storageMode === 'supabase' ? <Cloud className="h-5 w-5 shrink-0" /> : <HardDrive className="h-5 w-5 shrink-0" />}
+      <div className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-sm ${storageMode === 'railway' ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800'}`}>
+        {storageMode === 'railway' ? <Cloud className="h-5 w-5 shrink-0" /> : <HardDrive className="h-5 w-5 shrink-0" />}
         <span>
-          {storageMode === 'supabase'
-            ? 'Banco conectado: usuários e acessos são salvos no Supabase.'
-            : 'Modo local: os usuários ficam salvos neste navegador até conectarmos o banco hospedado.'}
+          {storageMode === 'railway'
+            ? 'Railway conectado: usuários e acessos são salvos no PostgreSQL.'
+            : 'Modo local de desenvolvimento: os usuários ficam temporariamente neste navegador.'}
         </span>
       </div>
 

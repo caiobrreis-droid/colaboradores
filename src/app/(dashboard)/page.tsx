@@ -7,12 +7,12 @@ import { ChartBairros } from '@/components/dashboard/chart-bairros';
 import { ChartRedes } from '@/components/dashboard/chart-redes';
 import { RecentUpdates } from '@/components/dashboard/recent-updates';
 import { StatCard } from '@/components/dashboard/stat-card';
-import { loadEmployees } from '@/lib/employee-storage';
+import { fetchEmployees } from '@/lib/employee-storage';
 import type { FuncionarioCompleto } from '@/types';
 
 export default function DashboardPage() {
   const [employees, setEmployees] = useState<FuncionarioCompleto[]>([]);
-  useEffect(() => setEmployees(loadEmployees()), []);
+  useEffect(() => { void fetchEmployees().then(setEmployees); }, []);
 
   const metrics = useMemo(() => {
     const positivados = employees.filter((employee) => employee.status_redes?.[0]?.status === 'positivado').length;

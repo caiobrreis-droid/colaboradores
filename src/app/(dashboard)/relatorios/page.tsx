@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { exportToExcel, exportToCSV, printReport } from '@/lib/export-utils';
 import { BriefcaseBusiness, Building2, FileDown, FileSpreadsheet, FileText, House, Landmark, Printer } from 'lucide-react';
 import { CATEGORIA_COLABORADOR_LABELS, CATEGORIA_COLABORADOR_OPTIONS } from '@/lib/constants';
-import type { CategoriaColaborador } from '@/types';
-import { loadEmployees } from '@/lib/employee-storage';
+import type { CategoriaColaborador, FuncionarioCompleto } from '@/types';
+import { fetchEmployees } from '@/lib/employee-storage';
 import { toast } from 'sonner';
 
 const CATEGORY_ICONS = {
@@ -20,12 +20,12 @@ const CATEGORY_ICONS = {
 };
 
 export default function RelatoriosPage() {
-  const [employees, setEmployees] = useState(() => [] as ReturnType<typeof loadEmployees>);
+  const [employees, setEmployees] = useState<FuncionarioCompleto[]>([]);
   const [reportData, setReportData] = useState<any[]>([]);
   const [reportTitle, setReportTitle] = useState('Relatório Geral');
   const [hasGenerated, setHasGenerated] = useState(false);
 
-  useEffect(() => setEmployees(loadEmployees()), []);
+  useEffect(() => { void fetchEmployees().then(setEmployees); }, []);
 
   const allData = useMemo(() => employees.map((employee) => {
     const instagram = employee.redes_sociais?.find((network) =>

@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/funcionarios/status-badge";
 import Link from "next/link";
-import { Phone, Instagram, MapPin, Briefcase } from "lucide-react";
+import { Phone, Instagram, MapPin } from "lucide-react";
 
 interface MapPopupProps {
   funcionario: {

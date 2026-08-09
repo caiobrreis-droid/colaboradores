@@ -9,9 +9,9 @@ import { EmployeeForm } from '@/components/funcionarios/employee-form';
 import { Button } from '@/components/ui/button';
 import {
   employeeFromForm,
-  findEmployee,
+  fetchEmployee,
   formValuesFromEmployee,
-  upsertEmployee,
+  persistEmployee,
   type EmployeeFormValues,
 } from '@/lib/employee-storage';
 import type { FuncionarioCompleto } from '@/types';
@@ -25,19 +25,20 @@ export default function EditarFuncionarioPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    setEmployee(findEmployee(id));
-    setLoaded(true);
+    void fetchEmployee(id)
+      .then(setEmployee)
+      .finally(() => setLoaded(true));
   }, [id]);
 
   const handleSubmit = async (values: EmployeeFormValues) => {
     if (!employee) return;
     setIsSubmitting(true);
     try {
-      upsertEmployee(employeeFromForm(values, employee));
+      await persistEmployee(employeeFromForm(values, employee));
       toast.success('Alterações salvas com sucesso.');
       router.push(`/funcionarios/${id}`);
-    } catch {
-      toast.error('Não foi possível salvar as alterações.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível salvar as alterações.');
     } finally {
       setIsSubmitting(false);
     }

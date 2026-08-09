@@ -21,7 +21,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CATEGORIA_COLABORADOR_LABELS } from '@/lib/constants';
-import { deleteEmployee, loadEmployees, setEmployeeNetworkStatus } from '@/lib/employee-storage';
+import { changeEmployeeNetworkStatus, fetchEmployees, removeEmployeeRecord } from '@/lib/employee-storage';
 import type { FuncionarioCompleto } from '@/types';
 
 const initialFilters: EmployeeFiltersState = {
@@ -40,7 +40,11 @@ export default function FuncionariosPage() {
   const [filters, setFilters] = useState(initialFilters);
   const [deleteTarget, setDeleteTarget] = useState<FuncionarioCompleto>();
 
-  useEffect(() => setEmployees(loadEmployees()), []);
+  useEffect(() => {
+    void fetchEmployees().then(setEmployees).catch((error) => {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível carregar os colaboradores.');
+    });
+  }, []);
 
   const filteredData = useMemo(() => employees.filter((employee) => {
     if (filters.search && !employee.nome.toLowerCase().includes(filters.search.toLowerCase())) return false;
@@ -62,18 +66,27 @@ export default function FuncionariosPage() {
     return true;
   }), [employees, filters]);
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!deleteTarget) return;
-    setEmployees(deleteEmployee(deleteTarget.id));
-    toast.success(`${deleteTarget.nome} foi excluído do sistema.`);
-    setDeleteTarget(undefined);
+    try {
+      await removeEmployeeRecord(deleteTarget.id);
+      setEmployees((current) => current.filter((employee) => employee.id !== deleteTarget.id));
+      toast.success(`${deleteTarget.nome} foi excluído do sistema.`);
+      setDeleteTarget(undefined);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível excluir o colaborador.');
+    }
   };
 
-  const handleStatusChange = (id: string, status: 'positivado' | 'negativado' | 'nao_avaliado') => {
-    const updated = setEmployeeNetworkStatus(id, status);
-    setEmployees(loadEmployees());
-    const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'neutro' };
-    toast.success(`${updated?.nome || 'Colaborador'} ficou ${labels[status]}.`);
+  const handleStatusChange = async (id: string, status: 'positivado' | 'negativado' | 'nao_avaliado') => {
+    try {
+      const updated = await changeEmployeeNetworkStatus(id, status);
+      if (updated) setEmployees((current) => current.map((employee) => employee.id === updated.id ? updated : employee));
+      const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'neutro' };
+      toast.success(`${updated?.nome || 'Colaborador'} ficou ${labels[status]}.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível alterar a situação.');
+    }
   };
 
   return (

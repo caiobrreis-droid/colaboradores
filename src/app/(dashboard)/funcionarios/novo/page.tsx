@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 
 import { EmployeeForm } from '@/components/funcionarios/employee-form';
 import { Button } from '@/components/ui/button';
-import { employeeFromForm, formValuesFromEmployee, upsertEmployee } from '@/lib/employee-storage';
+import { employeeFromForm, formValuesFromEmployee, persistEmployee } from '@/lib/employee-storage';
 
 export default function NovoFuncionarioPage() {
   const router = useRouter();
@@ -17,11 +17,11 @@ export default function NovoFuncionarioPage() {
     setIsSubmitting(true);
     try {
       const employee = employeeFromForm(values);
-      upsertEmployee(employee);
+      const saved = await persistEmployee(employee);
       toast.success('Colaborador cadastrado e salvo com sucesso.');
-      router.push(`/funcionarios/${employee.id}`);
-    } catch {
-      toast.error('Não foi possível salvar. Verifique o espaço disponível no navegador.');
+      router.push(`/funcionarios/${saved.id}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível salvar o colaborador.');
     } finally {
       setIsSubmitting(false);
     }

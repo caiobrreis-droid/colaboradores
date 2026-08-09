@@ -30,7 +30,6 @@ interface MarkerData {
 
 interface MapContainerProps {
   markers: MarkerData[];
-  selectedId?: string;
   height?: string;
   zoom?: number;
   center?: { lat: number; lng: number };
@@ -47,7 +46,6 @@ function MapUpdater({ center, zoom }: { center: [number, number]; zoom: number }
 
 export default function MapContainer({
   markers,
-  selectedId,
   height = "100%",
   zoom = MAP_DEFAULT_ZOOM,
   center = MAP_CENTER,
@@ -55,7 +53,7 @@ export default function MapContainer({
 
   const getCustomIcon = (status: string) => {
     let borderColor = "#0057FF"; // default vessel-blue
-    let bgColor = "#ffffff";
+    const bgColor = "#ffffff";
 
     if (status === "Positivado") borderColor = "#00C853"; // vessel-green
     else if (status === "Negativado") borderColor = "#ef4444"; // red-500

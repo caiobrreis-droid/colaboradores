@@ -8,13 +8,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { loadEmployees } from '@/lib/employee-storage';
+import { fetchEmployees } from '@/lib/employee-storage';
 import type { FuncionarioCompleto } from '@/types';
 
 export default function BairrosPage() {
   const [employees, setEmployees] = useState<FuncionarioCompleto[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  useEffect(() => setEmployees(loadEmployees()), []);
+  useEffect(() => { void fetchEmployees().then(setEmployees); }, []);
 
   const neighborhoods = useMemo(() => {
     const grouped = new Map<string, FuncionarioCompleto[]>();
