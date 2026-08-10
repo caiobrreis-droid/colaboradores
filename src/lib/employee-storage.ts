@@ -12,6 +12,7 @@ export interface EmployeeFormValues {
   email: string;
   cargo: string;
   categoria: CategoriaColaborador | '';
+  indicacao: string;
   funcao: string;
   matricula: string;
   dataEntrada: string;
@@ -120,6 +121,7 @@ export function formValuesFromEmployee(employee?: FuncionarioCompleto): Employee
     email: employee?.email || '',
     cargo: employee?.cargo || '',
     categoria: employee?.categoria || '',
+    indicacao: employee?.indicacao || '',
     funcao: employee?.funcao || '',
     matricula: employee?.matricula || '',
     dataEntrada: employee?.dataEntrada || '',
@@ -175,6 +177,7 @@ export function employeeFromForm(values: EmployeeFormValues, existing?: Funciona
     email: values.email.trim(),
     cargo: values.cargo,
     categoria: values.categoria as CategoriaColaborador,
+    indicacao: values.indicacao.trim(),
     funcao: values.funcao.trim(),
     matricula: values.matricula.trim(),
     dataEntrada: values.dataEntrada,

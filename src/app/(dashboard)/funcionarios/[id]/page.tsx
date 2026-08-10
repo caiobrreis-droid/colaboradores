@@ -138,6 +138,7 @@ export default function EmployeeProfilePage() {
                 <Info label="Telefone" value={employee.telefone} />
                 <Info label="WhatsApp" value={employee.whatsapp} />
                 <Info label="Categoria" value={CATEGORIA_COLABORADOR_LABELS[employee.categoria]} />
+                <Info label="Indicação" value={employee.indicacao} />
                 <Info label="Função" value={employee.funcao} />
                 <Info label="Matrícula" value={employee.matricula} />
                 <Info label="Data de Entrada" value={formatDate(employee.dataEntrada)} />

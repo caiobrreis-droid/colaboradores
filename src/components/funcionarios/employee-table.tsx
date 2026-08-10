@@ -49,6 +49,7 @@ export function EmployeeTable({ data, onView, onEdit, onDelete, onStatusChange }
               <TableHead>Categoria</TableHead>
               <TableHead>Bairro</TableHead>
               <TableHead>Telefone</TableHead>
+              <TableHead>Indicação</TableHead>
               <TableHead>Instagram</TableHead>
               <TableHead>Situação</TableHead>
               <TableHead className="text-right">Ações</TableHead>
@@ -57,7 +58,7 @@ export function EmployeeTable({ data, onView, onEdit, onDelete, onStatusChange }
           <TableBody>
             {currentData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="h-24 text-center">
+                <TableCell colSpan={10} className="h-24 text-center">
                   Nenhum colaborador encontrado.
                 </TableCell>
               </TableRow>
@@ -85,6 +86,7 @@ export function EmployeeTable({ data, onView, onEdit, onDelete, onStatusChange }
                     </TableCell>
                     <TableCell className="text-muted-foreground">{employee.endereco?.bairro || '-'}</TableCell>
                     <TableCell className="text-muted-foreground">{employee.telefone || '-'}</TableCell>
+                    <TableCell className="text-muted-foreground">{employee.indicacao || '-'}</TableCell>
                     <TableCell>
                       {instagram ? (
                         <a href={`https://instagram.com/${instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-vessel-blue hover:underline inline-flex items-center">

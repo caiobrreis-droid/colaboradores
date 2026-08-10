@@ -47,7 +47,11 @@ export default function FuncionariosPage() {
   }, []);
 
   const filteredData = useMemo(() => employees.filter((employee) => {
-    if (filters.search && !employee.nome.toLowerCase().includes(filters.search.toLowerCase())) return false;
+    if (filters.search) {
+      const search = filters.search.toLowerCase();
+      const searchable = [employee.nome, employee.telefone, employee.indicacao].filter(Boolean).join(' ').toLowerCase();
+      if (!searchable.includes(search)) return false;
+    }
     if (filters.categoria !== 'all' && employee.categoria !== filters.categoria) return false;
     if (filters.bairro !== 'all' && employee.endereco?.bairro !== filters.bairro) return false;
     if (filters.cargo !== 'all' && employee.cargo !== filters.cargo) return false;

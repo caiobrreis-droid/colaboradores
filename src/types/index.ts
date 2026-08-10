@@ -20,6 +20,7 @@ export interface Funcionario {
   email?: string;
   cargo: string;
   categoria: CategoriaColaborador;
+  indicacao?: string;
   funcao?: string;
   matricula?: string;
   dataEntrada?: string;

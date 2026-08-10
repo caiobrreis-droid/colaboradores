@@ -4,7 +4,7 @@ import { FuncionarioCompleto } from "@/types"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { StatusBadge } from "./status-badge"
 import { Button } from "@/components/ui/button"
-import { MapPin, Phone, Edit, Eye, Instagram, Trash2, CheckCircle2, XCircle, MinusCircle } from "lucide-react"
+import { MapPin, Phone, Edit, Eye, Instagram, Trash2, CheckCircle2, XCircle, MinusCircle, UserRound } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { CATEGORIA_COLABORADOR_LABELS } from "@/lib/constants"
 
@@ -47,6 +47,10 @@ export function EmployeeCard({ employee, onView, onEdit, onDelete, onStatusChang
         <div className="flex items-center gap-2">
           <Phone className="h-4 w-4" />
           <span>{telefone || 'Sem telefone'}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <UserRound className="h-4 w-4" />
+          <span>{employee.indicacao ? `Indicação: ${employee.indicacao}` : 'Sem indicação'}</span>
         </div>
         {instagram && (
           <div className="flex items-center gap-2 text-vessel-blue">

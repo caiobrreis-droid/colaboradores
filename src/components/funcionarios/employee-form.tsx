@@ -150,6 +150,7 @@ export function EmployeeForm({ initialValues, submitLabel, isSubmitting = false,
                     <SelectContent>{CATEGORIA_COLABORADOR_OPTIONS.map(({ value, label }) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
                   </Select>
                 </Field>
+                <Field label="Indicação" id="indicacao"><Input id="indicacao" value={values.indicacao} onChange={(e) => setField('indicacao', e.target.value)} placeholder="Quem indicou este colaborador" /></Field>
                 <Field label="Função" id="funcao"><Input id="funcao" value={values.funcao} onChange={(e) => setField('funcao', e.target.value)} placeholder="Função específica" /></Field>
                 <Field label="Matrícula" id="matricula"><Input id="matricula" value={values.matricula} onChange={(e) => setField('matricula', e.target.value)} placeholder="Ex: 12345" /></Field>
                 <Field label="Data de Entrada" id="entrada"><Input id="entrada" type="date" value={values.dataEntrada} onChange={(e) => setField('dataEntrada', e.target.value)} /></Field>

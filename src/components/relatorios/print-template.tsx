@@ -67,14 +67,15 @@ export function PrintTemplate({ data, title }: PrintTemplateProps) {
           .print-report-table td { height: 8.2mm !important; box-sizing: border-box !important; padding: 1.3mm 2mm !important; border-bottom: 1px solid #dce3ed !important; color: #0f254d !important; vertical-align: middle !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
           .print-report-table tr:last-child td { border-bottom: 0 !important; }
           .print-report-table tbody tr:nth-child(even) td { background: #fbfcfe !important; }
-          .print-report-table th:nth-child(1), .print-report-table td:nth-child(1) { width: 6% !important; text-align: center !important; color: #0758e3 !important; font-weight: 800 !important; }
+          .print-report-table th:nth-child(1), .print-report-table td:nth-child(1) { width: 5% !important; text-align: center !important; color: #0758e3 !important; font-weight: 800 !important; }
           .print-report-table th:nth-child(1) { color: #ffffff !important; }
-          .print-report-table th:nth-child(2), .print-report-table td:nth-child(2) { width: 23% !important; }
-          .print-report-table th:nth-child(3), .print-report-table td:nth-child(3) { width: 17% !important; }
-          .print-report-table th:nth-child(4), .print-report-table td:nth-child(4) { width: 16% !important; }
-          .print-report-table th:nth-child(5), .print-report-table td:nth-child(5) { width: 15% !important; }
-          .print-report-table th:nth-child(6), .print-report-table td:nth-child(6) { width: 14% !important; }
-          .print-report-table th:nth-child(7), .print-report-table td:nth-child(7) { width: 9% !important; text-align: center !important; }
+          .print-report-table th:nth-child(2), .print-report-table td:nth-child(2) { width: 21% !important; }
+          .print-report-table th:nth-child(3), .print-report-table td:nth-child(3) { width: 14% !important; }
+          .print-report-table th:nth-child(4), .print-report-table td:nth-child(4) { width: 14% !important; }
+          .print-report-table th:nth-child(5), .print-report-table td:nth-child(5) { width: 13% !important; }
+          .print-report-table th:nth-child(6), .print-report-table td:nth-child(6) { width: 13% !important; }
+          .print-report-table th:nth-child(7), .print-report-table td:nth-child(7) { width: 11% !important; }
+          .print-report-table th:nth-child(8), .print-report-table td:nth-child(8) { width: 9% !important; text-align: center !important; }
           .print-report-person { display: flex !important; align-items: center !important; gap: 2.2mm !important; min-width: 0 !important; }
           .print-report-avatar { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 5mm !important; height: 5mm !important; flex: 0 0 5mm !important; overflow: hidden !important; border-radius: 50% !important; background: #dbeafe !important; color: #0758e3 !important; font-size: 5.5pt !important; font-weight: 800 !important; }
           .print-report-avatar img { width: 100% !important; height: 100% !important; object-fit: cover !important; }
@@ -123,7 +124,7 @@ export function PrintTemplate({ data, title }: PrintTemplateProps) {
             <main className="print-report-content">
               <div className="print-report-table-wrap">
                 <table className="print-report-table">
-                  <thead><tr><th>Nº</th><th>Nome</th><th>Cargo</th><th>Categoria</th><th>Bairro</th><th>Telefone</th><th>Situação</th></tr></thead>
+                  <thead><tr><th>Nº</th><th>Nome</th><th>Cargo</th><th>Categoria</th><th>Bairro</th><th>Telefone</th><th>Indicação</th><th>Situação</th></tr></thead>
                   <tbody>
                     {pageRows.map((item, rowIndex) => {
                       const absoluteIndex = pageIndex * ROWS_PER_PAGE + rowIndex;
@@ -139,6 +140,7 @@ export function PrintTemplate({ data, title }: PrintTemplateProps) {
                           <td><span className={`print-category ${category}`}><CategoryIcon />{CATEGORIA_COLABORADOR_LABELS[category] || item.categoria}</span></td>
                           <td>{item.bairro || '—'}</td>
                           <td>{item.telefone || '—'}</td>
+                          <td>{item.indicacao || '—'}</td>
                           <td><span className={`print-status ${statusClass}`}>{item.situacao || 'Neutro'}</span></td>
                         </tr>
                       );

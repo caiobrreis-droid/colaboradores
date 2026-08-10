@@ -38,6 +38,7 @@ export function ReportTable({ data, title }: ReportTableProps) {
                 <TableHead className="font-semibold">Categoria</TableHead>
                 <TableHead className="font-semibold">Bairro</TableHead>
                 <TableHead className="font-semibold">Telefone</TableHead>
+                <TableHead className="font-semibold">Indicação</TableHead>
                 <TableHead className="font-semibold">Instagram</TableHead>
                 <TableHead className="font-semibold">Situação</TableHead>
                 <TableHead className="font-semibold text-right">Última Atualização</TableHead>
@@ -52,6 +53,7 @@ export function ReportTable({ data, title }: ReportTableProps) {
                   <TableCell>{CATEGORIA_COLABORADOR_LABELS[item.categoria as CategoriaColaborador] || item.categoria}</TableCell>
                   <TableCell>{item.bairro}</TableCell>
                   <TableCell>{item.telefone}</TableCell>
+                  <TableCell>{item.indicacao || '-'}</TableCell>
                   <TableCell>{item.instagram ? `@${item.instagram}` : '-'}</TableCell>
                   <TableCell>
                     <StatusBadge status={item.situacao} />
@@ -62,7 +64,7 @@ export function ReportTable({ data, title }: ReportTableProps) {
                 </TableRow>
               ))}
               <TableRow className="bg-gray-100 font-semibold">
-                <TableCell colSpan={8} className="text-right">Total de Registros:</TableCell>
+                <TableCell colSpan={9} className="text-right">Total de Registros:</TableCell>
                 <TableCell className="text-right">{data.length}</TableCell>
               </TableRow>
             </TableBody>

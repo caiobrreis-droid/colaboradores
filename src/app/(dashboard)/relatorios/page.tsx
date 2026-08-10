@@ -39,6 +39,7 @@ export default function RelatoriosPage() {
       categoria: employee.categoria,
       bairro: employee.endereco?.bairro || '',
       telefone: employee.telefone || '',
+      indicacao: employee.indicacao || '',
       instagram: instagram?.username || instagram?.handle || '',
       situacao: networkStatus === 'positivado' ? 'Positivado' : networkStatus === 'negativado' ? 'Negativado' : 'Neutro',
       ativo: employee.ativo !== false,
