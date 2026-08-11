@@ -86,7 +86,7 @@ export default function PublicacoesPage() {
                   <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Positivo">Positivo</SelectItem>
-                    <SelectItem value="Neutro">Neutro</SelectItem>
+                    <SelectItem value="Parcial">Parcial</SelectItem>
                     <SelectItem value="Negativo">Negativo</SelectItem>
                   </SelectContent>
                 </Select>

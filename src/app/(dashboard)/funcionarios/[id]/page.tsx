@@ -71,7 +71,7 @@ export default function EmployeeProfilePage() {
     try {
       const updated = await changeEmployeeNetworkStatus(employee.id, newStatus);
       if (updated) setEmployee(updated);
-      const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'neutro' };
+      const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'parcial' };
       toast.success(`${employee.nome} ficou ${labels[newStatus]}.`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Não foi possível alterar a situação.');
@@ -109,12 +109,12 @@ export default function EmployeeProfilePage() {
         <CardContent className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="font-semibold text-vessel-deep">Situação das postagens no Instagram</p>
-            <p className="mt-1 text-sm text-muted-foreground">Marque se o colaborador fez as postagens solicitadas ou deixe neutro quando ainda não houver avaliação.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Marque se o colaborador fez as postagens solicitadas ou deixe como parcial quando a avaliação ainda não estiver concluída.</p>
           </div>
           <div className="grid shrink-0 grid-cols-1 gap-2 sm:grid-cols-3">
             <Button variant={status === 'positivado' ? 'default' : 'outline'} onClick={() => updateStatus('positivado')} className={status === 'positivado' ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'border-emerald-200 text-emerald-700 hover:bg-emerald-50'}><CheckCircle2 className="mr-2 h-4 w-4" />Positivar</Button>
             <Button variant={status === 'negativado' ? 'default' : 'outline'} onClick={() => updateStatus('negativado')} className={status === 'negativado' ? 'bg-red-600 text-white hover:bg-red-700' : 'border-red-200 text-red-700 hover:bg-red-50'}><XCircle className="mr-2 h-4 w-4" />Despositivar</Button>
-            <Button variant={status === 'nao_avaliado' ? 'default' : 'outline'} onClick={() => updateStatus('nao_avaliado')} className={status === 'nao_avaliado' ? 'bg-slate-500 text-white hover:bg-slate-600' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}><MinusCircle className="mr-2 h-4 w-4" />Neutro</Button>
+            <Button variant={status === 'nao_avaliado' ? 'default' : 'outline'} onClick={() => updateStatus('nao_avaliado')} className={status === 'nao_avaliado' ? 'bg-amber-500 text-white hover:bg-amber-600' : 'border-amber-200 text-amber-700 hover:bg-amber-50'}><MinusCircle className="mr-2 h-4 w-4" />Parcial</Button>
           </div>
         </CardContent>
       </Card>

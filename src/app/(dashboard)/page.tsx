@@ -34,7 +34,7 @@ export default function DashboardPage() {
   const statusData = [
     { name: 'Positivados', value: metrics.positivados, color: '#10b981' },
     { name: 'Despositivados', value: metrics.negativados, color: '#ef4444' },
-    { name: 'Neutros', value: metrics.neutros, color: '#94a3b8' },
+    { name: 'Parciais', value: metrics.neutros, color: '#f59e0b' },
   ];
 
   return (
@@ -44,7 +44,7 @@ export default function DashboardPage() {
         <StatCard title="Total Colaboradores" value={employees.length} icon={Users} color="blue" />
         <StatCard title="Positivados" value={metrics.positivados} icon={CheckCircle2} color="green" />
         <StatCard title="Despositivados" value={metrics.negativados} icon={XCircle} color="red" />
-        <StatCard title="Neutros" value={metrics.neutros} icon={Clock} color="yellow" />
+        <StatCard title="Parciais" value={metrics.neutros} icon={Clock} color="yellow" />
         <StatCard title="Bairros" value={metrics.neighborhoods.length} icon={MapPin} color="cyan" />
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-5"><ChartBairros data={metrics.neighborhoods} /><ChartRedes data={statusData} /></div>

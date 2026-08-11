@@ -66,7 +66,7 @@ export function EmployeeCard({ employee, onView, onEdit, onDelete, onStatusChang
           <div className="flex gap-1" aria-label="Alterar status das postagens">
             <Button title="Positivar" variant="ghost" size="icon" onClick={() => onStatusChange(employee.id, 'positivado')} className="text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"><CheckCircle2 className="h-4 w-4" /></Button>
             <Button title="Despositivar" variant="ghost" size="icon" onClick={() => onStatusChange(employee.id, 'negativado')} className="text-red-600 hover:bg-red-50 hover:text-red-700"><XCircle className="h-4 w-4" /></Button>
-            <Button title="Deixar neutro" variant="ghost" size="icon" onClick={() => onStatusChange(employee.id, 'nao_avaliado')} className="text-slate-500 hover:bg-slate-100"><MinusCircle className="h-4 w-4" /></Button>
+            <Button title="Marcar como parcial" variant="ghost" size="icon" onClick={() => onStatusChange(employee.id, 'nao_avaliado')} className="text-amber-600 hover:bg-amber-50"><MinusCircle className="h-4 w-4" /></Button>
           </div>
         </div>
 

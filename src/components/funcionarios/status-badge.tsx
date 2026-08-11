@@ -29,9 +29,9 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   }
 
   return (
-    <Badge variant="warning" className={cn("bg-slate-400 hover:bg-slate-500 text-white border-transparent", className)}>
+    <Badge variant="warning" className={cn("bg-amber-500 hover:bg-amber-600 text-white border-transparent", className)}>
       <MinusCircle className="w-3 h-3 mr-1" />
-      NEUTRO
+      PARCIAL
     </Badge>
   );
 }

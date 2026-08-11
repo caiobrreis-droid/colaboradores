@@ -48,7 +48,7 @@ export function getStatusColor(status: string) {
     case "negativado":
       return "text-red-600 bg-red-100";
     case "nao_avaliado":
-      return "text-vessel-gray-300 bg-vessel-gray-50";
+      return "text-amber-700 bg-amber-100";
     default:
       return "text-gray-600 bg-gray-100";
   }
@@ -61,7 +61,7 @@ export function getStatusLabel(status: string) {
     case "negativado":
       return "Negativado";
     case "nao_avaliado":
-      return "Não Avaliado";
+      return "Parcial";
     default:
       return capitalize(status);
   }

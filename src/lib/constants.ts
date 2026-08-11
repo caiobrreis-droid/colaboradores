@@ -17,7 +17,7 @@ export const CATEGORIA_COLABORADOR_LABELS = Object.fromEntries(
 export const STATUS_OPTIONS = [
   { value: 'positivado', label: 'Positivado' },
   { value: 'negativado', label: 'Negativado' },
-  { value: 'nao_avaliado', label: 'Neutro' },
+  { value: 'nao_avaliado', label: 'Parcial' },
 ];
 
 export const CARGO_OPTIONS = [

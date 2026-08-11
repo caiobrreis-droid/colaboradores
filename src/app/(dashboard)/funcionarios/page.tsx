@@ -86,7 +86,7 @@ export default function FuncionariosPage() {
     try {
       const updated = await changeEmployeeNetworkStatus(id, status);
       if (updated) setEmployees((current) => current.map((employee) => employee.id === updated.id ? updated : employee));
-      const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'neutro' };
+      const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'parcial' };
       toast.success(`${updated?.nome || 'Colaborador'} ficou ${labels[status]}.`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Não foi possível alterar a situação.');

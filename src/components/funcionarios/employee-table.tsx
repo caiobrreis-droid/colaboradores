@@ -130,7 +130,7 @@ export function EmployeeTable({ data, onView, onEdit, onDelete, onStatusChange }
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => onStatusChange(employee.id, 'nao_avaliado')}>
                             <MinusCircle className="mr-2 h-4 w-4" />
-                            Deixar neutro
+                            Marcar como parcial
                           </DropdownMenuItem>
                           {instagram && (
                             <DropdownMenuItem asChild>

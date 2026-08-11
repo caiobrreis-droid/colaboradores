@@ -41,7 +41,7 @@ export default function RelatoriosPage() {
       telefone: employee.telefone || '',
       indicacao: employee.indicacao || '',
       instagram: instagram?.username || instagram?.handle || '',
-      situacao: networkStatus === 'positivado' ? 'Positivado' : networkStatus === 'negativado' ? 'Negativado' : 'Neutro',
+      situacao: networkStatus === 'positivado' ? 'Positivado' : networkStatus === 'negativado' ? 'Negativado' : 'Parcial',
       ativo: employee.ativo !== false,
       ultimaAtualizacao: new Date(employee.updated_at).toLocaleDateString('pt-BR'),
     };
@@ -60,7 +60,7 @@ export default function RelatoriosPage() {
     }
     if (filters.tipo === 'positivados') filtered = filtered.filter((item) => item.situacao === 'Positivado');
     if (filters.tipo === 'negativados') filtered = filtered.filter((item) => item.situacao === 'Negativado');
-    if (filters.tipo === 'pendentes') filtered = filtered.filter((item) => item.situacao === 'Neutro');
+    if (filters.tipo === 'pendentes') filtered = filtered.filter((item) => item.situacao === 'Parcial');
     if (filters.tipo === 'sem_instagram') filtered = filtered.filter((item) => !item.instagram);
     if (filters.tipo === 'ativos') filtered = filtered.filter((item) => item.ativo);
     if (filters.tipo === 'inativos') filtered = filtered.filter((item) => !item.ativo);

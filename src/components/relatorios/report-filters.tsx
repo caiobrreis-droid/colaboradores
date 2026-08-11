@@ -51,7 +51,7 @@ export function ReportFilters({ onGenerate }: ReportFiltersProps) {
                 <SelectItem value="cargo">Por cargo</SelectItem>
                 <SelectItem value="positivados">Positivados</SelectItem>
                 <SelectItem value="negativados">Negativados</SelectItem>
-                <SelectItem value="pendentes">Neutros</SelectItem>
+                <SelectItem value="pendentes">Parciais</SelectItem>
                 <SelectItem value="sem_instagram">Sem Instagram</SelectItem>
                 <SelectItem value="ativos">Ativos</SelectItem>
                 <SelectItem value="inativos">Inativos</SelectItem>

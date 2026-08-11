@@ -139,7 +139,7 @@ export function EmployeeFilters({ filters, onFilterChange }: EmployeeFiltersProp
               <SelectItem value="all">Todos os status</SelectItem>
               <SelectItem value="positivado">Positivado</SelectItem>
               <SelectItem value="negativado">Negativado</SelectItem>
-              <SelectItem value="nao_avaliado">Neutro</SelectItem>
+              <SelectItem value="nao_avaliado">Parcial</SelectItem>
             </SelectContent>
           </Select>
         </div>
