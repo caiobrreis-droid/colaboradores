@@ -18,6 +18,7 @@ export const STATUS_OPTIONS = [
   { value: 'positivado', label: 'Positivado' },
   { value: 'negativado', label: 'Negativado' },
   { value: 'nao_avaliado', label: 'Parcial' },
+  { value: 'rede_nao_encontrada', label: 'Rede não encontrada' },
 ];
 
 export const CARGO_OPTIONS = [

@@ -140,6 +140,7 @@ export function EmployeeFilters({ filters, onFilterChange }: EmployeeFiltersProp
               <SelectItem value="positivado">Positivado</SelectItem>
               <SelectItem value="negativado">Negativado</SelectItem>
               <SelectItem value="nao_avaliado">Parcial</SelectItem>
+              <SelectItem value="rede_nao_encontrada">Rede não encontrada</SelectItem>
             </SelectContent>
           </Select>
         </div>

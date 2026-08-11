@@ -87,6 +87,7 @@ export default function PublicacoesPage() {
                   <SelectContent>
                     <SelectItem value="Positivo">Positivo</SelectItem>
                     <SelectItem value="Parcial">Parcial</SelectItem>
+                    <SelectItem value="Rede não encontrada">Rede não encontrada</SelectItem>
                     <SelectItem value="Negativo">Negativo</SelectItem>
                   </SelectContent>
                 </Select>

@@ -59,7 +59,8 @@ export default function FuncionariosPage() {
       const situation = employee.ativo === false ? 'inativo' : 'ativo';
       if (situation !== filters.situacao) return false;
     }
-    if (filters.positivacao !== 'all' && employee.status_redes?.[0]?.status !== filters.positivacao) return false;
+    const networkStatus = employee.status_redes?.[0]?.status || 'nao_avaliado';
+    if (filters.positivacao !== 'all' && networkStatus !== filters.positivacao) return false;
     if (filters.instagram !== 'all') {
       const hasInstagram = employee.redes_sociais?.some((network) =>
         String(network.rede_social || network.plataforma || '').toLowerCase() === 'instagram' && (network.username || network.handle || network.url),
@@ -82,11 +83,11 @@ export default function FuncionariosPage() {
     }
   };
 
-  const handleStatusChange = async (id: string, status: 'positivado' | 'negativado' | 'nao_avaliado') => {
+  const handleStatusChange = async (id: string, status: 'positivado' | 'negativado' | 'nao_avaliado' | 'rede_nao_encontrada') => {
     try {
       const updated = await changeEmployeeNetworkStatus(id, status);
       if (updated) setEmployees((current) => current.map((employee) => employee.id === updated.id ? updated : employee));
-      const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'parcial' };
+      const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'parcial', rede_nao_encontrada: 'com a rede não encontrada' };
       toast.success(`${updated?.nome || 'Colaborador'} ficou ${labels[status]}.`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Não foi possível alterar a situação.');

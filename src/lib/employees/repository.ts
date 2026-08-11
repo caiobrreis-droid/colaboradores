@@ -146,7 +146,7 @@ export async function updateEmployee(employee: FuncionarioCompleto) {
   }
 }
 
-export async function updateEmployeeStatus(id: string, status: 'positivado' | 'negativado' | 'nao_avaliado') {
+export async function updateEmployeeStatus(id: string, status: 'positivado' | 'negativado' | 'nao_avaliado' | 'rede_nao_encontrada') {
   const employee = await getEmployee(id);
   if (!employee) return null;
   const timestamp = new Date().toISOString();

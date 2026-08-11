@@ -37,7 +37,7 @@ export const redeSocialSchema = z.object({
 });
 
 export const statusRedeSchema = z.object({
-  status: z.enum(["positivado", "negativado", "nao_avaliado"]),
+  status: z.enum(["positivado", "negativado", "nao_avaliado", "rede_nao_encontrada"]),
   observacoes: z.string().optional(),
 });
 

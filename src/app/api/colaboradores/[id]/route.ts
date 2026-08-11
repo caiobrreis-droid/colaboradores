@@ -16,7 +16,7 @@ import type { FuncionarioCompleto } from '@/types';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-const statusSchema = z.object({ status: z.enum(['positivado', 'negativado', 'nao_avaliado']) });
+const statusSchema = z.object({ status: z.enum(['positivado', 'negativado', 'nao_avaliado', 'rede_nao_encontrada']) });
 
 async function requireAccess(write = false) {
   if (!isDatabaseConfigured()) {

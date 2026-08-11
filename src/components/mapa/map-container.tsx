@@ -57,7 +57,8 @@ export default function MapContainer({
 
     if (status === "Positivado") borderColor = "#00C853"; // vessel-green
     else if (status === "Negativado") borderColor = "#ef4444"; // red-500
-    else if (status === "Pendente") borderColor = "#f59e0b"; // amber-500
+    else if (status === "Parcial" || status === "Pendente") borderColor = "#f59e0b"; // amber-500
+    else if (status === "Rede não encontrada") borderColor = "#7c3aed"; // violet-600
 
     const html = `
       <div style="

@@ -1,14 +1,23 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, XCircle, MinusCircle } from "lucide-react";
+import { CheckCircle2, XCircle, MinusCircle, SearchX } from "lucide-react";
 
 interface StatusBadgeProps {
-  status: 'positivado' | 'negativado' | 'nao_avaliado' | string;
+  status: 'positivado' | 'negativado' | 'nao_avaliado' | 'rede_nao_encontrada' | string;
   className?: string;
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const normalized = String(status || '').toLowerCase();
+
+  if (normalized.includes('rede_nao_encontrada') || normalized.includes('rede não encontrada')) {
+    return (
+      <Badge variant="secondary" className={cn("bg-violet-600 text-white hover:bg-violet-700 border-transparent", className)}>
+        <SearchX className="w-3 h-3 mr-1" />
+        REDE NÃO ENCONTRADA
+      </Badge>
+    );
+  }
 
   if (normalized.includes('pos')) {
     return (

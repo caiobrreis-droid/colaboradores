@@ -49,6 +49,8 @@ export function getStatusColor(status: string) {
       return "text-red-600 bg-red-100";
     case "nao_avaliado":
       return "text-amber-700 bg-amber-100";
+    case "rede_nao_encontrada":
+      return "text-violet-700 bg-violet-100";
     default:
       return "text-gray-600 bg-gray-100";
   }
@@ -62,6 +64,8 @@ export function getStatusLabel(status: string) {
       return "Negativado";
     case "nao_avaliado":
       return "Parcial";
+    case "rede_nao_encontrada":
+      return "Rede não encontrada";
     default:
       return capitalize(status);
   }
@@ -76,6 +80,8 @@ export function getStatusIcon(status: string) {
       return "x-circle";
     case "nao_avaliado":
       return "help-circle";
+    case "rede_nao_encontrada":
+      return "search-x";
     default:
       return "circle";
   }

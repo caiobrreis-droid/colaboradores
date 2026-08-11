@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { StatusBadge } from "./status-badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Eye, Edit, Instagram, Map, History, Printer, ChevronLeft, ChevronRight, ArrowUpDown, Trash2, CheckCircle2, XCircle, MinusCircle } from "lucide-react"
+import { MoreHorizontal, Eye, Edit, Instagram, Map, History, Printer, ChevronLeft, ChevronRight, ArrowUpDown, Trash2, CheckCircle2, XCircle, MinusCircle, SearchX } from "lucide-react"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { CATEGORIA_COLABORADOR_LABELS } from "@/lib/constants"
@@ -23,7 +23,7 @@ interface EmployeeTableProps {
   onView: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
-  onStatusChange: (id: string, status: 'positivado' | 'negativado' | 'nao_avaliado') => void;
+  onStatusChange: (id: string, status: 'positivado' | 'negativado' | 'nao_avaliado' | 'rede_nao_encontrada') => void;
 }
 
 export function EmployeeTable({ data, onView, onEdit, onDelete, onStatusChange }: EmployeeTableProps) {
@@ -131,6 +131,10 @@ export function EmployeeTable({ data, onView, onEdit, onDelete, onStatusChange }
                           <DropdownMenuItem onClick={() => onStatusChange(employee.id, 'nao_avaliado')}>
                             <MinusCircle className="mr-2 h-4 w-4" />
                             Marcar como parcial
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => onStatusChange(employee.id, 'rede_nao_encontrada')} className="text-violet-700 focus:text-violet-700">
+                            <SearchX className="mr-2 h-4 w-4" />
+                            Rede não encontrada
                           </DropdownMenuItem>
                           {instagram && (
                             <DropdownMenuItem asChild>

@@ -86,6 +86,7 @@ export function PrintTemplate({ data, title }: PrintTemplateProps) {
           .print-status.positivado { background: #11b95f !important; }
           .print-status.negativado { background: #dc2626 !important; }
           .print-status.parcial, .print-status.neutro, .print-status.pendente { background: #f6a800 !important; }
+          .print-status.rede-nao-encontrada { padding-right: 1mm !important; padding-left: 1mm !important; background: #7c3aed !important; font-size: 4.9pt !important; }
           .print-report-footer { position: absolute !important; right: 0 !important; bottom: 0 !important; left: 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; height: 14mm !important; padding-right: 8mm !important; background: linear-gradient(120deg, #0634a4 0%, #0649c7 27%, #ffffff 27.2%, #ffffff 86%, #eef3fa 86.2%) !important; }
           .print-report-total { display: flex !important; align-items: center !important; gap: 2mm !important; padding-left: 9mm !important; color: #ffffff !important; }
           .print-report-total svg { width: 5mm !important; height: 5mm !important; }
@@ -130,7 +131,9 @@ export function PrintTemplate({ data, title }: PrintTemplateProps) {
                       const absoluteIndex = pageIndex * ROWS_PER_PAGE + rowIndex;
                       const category = item.categoria as CategoriaColaborador;
                       const CategoryIcon = categoryIcons[category] || Building2;
-                      const statusClass = String(item.situacao || 'Parcial').toLocaleLowerCase('pt-BR');
+                      const statusClass = item.situacao === 'Rede não encontrada'
+                        ? 'rede-nao-encontrada'
+                        : String(item.situacao || 'Parcial').toLocaleLowerCase('pt-BR');
                       const initials = String(item.nome || '').split(' ').filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
                       return (
                         <tr key={`${item.nome}-${absoluteIndex}`}>

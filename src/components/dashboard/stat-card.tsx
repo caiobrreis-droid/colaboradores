@@ -10,7 +10,7 @@ interface StatCardProps {
   subtitle?: string
   icon: LucideIcon
   trend?: number
-  color: 'blue' | 'green' | 'red' | 'yellow' | 'cyan'
+  color: 'blue' | 'green' | 'red' | 'yellow' | 'cyan' | 'purple'
 }
 
 const colorStyles = {
@@ -38,6 +38,11 @@ const colorStyles = {
     bg: "bg-vessel-cyan/10",
     text: "text-vessel-cyan",
     border: "from-vessel-cyan/40 to-transparent",
+  },
+  purple: {
+    bg: "bg-violet-500/10",
+    text: "text-violet-600",
+    border: "from-violet-500/40 to-transparent",
   },
 }
 

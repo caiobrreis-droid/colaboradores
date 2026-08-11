@@ -57,7 +57,7 @@ export interface RedeSocial {
 export interface StatusRede {
   id: string;
   funcionario_id: string;
-  status: 'positivado' | 'negativado' | 'nao_avaliado';
+  status: 'positivado' | 'negativado' | 'nao_avaliado' | 'rede_nao_encontrada';
   ultima_avaliacao: string;
   observacoes?: string;
 }

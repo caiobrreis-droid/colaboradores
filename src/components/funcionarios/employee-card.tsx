@@ -4,7 +4,7 @@ import { FuncionarioCompleto } from "@/types"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { StatusBadge } from "./status-badge"
 import { Button } from "@/components/ui/button"
-import { MapPin, Phone, Edit, Eye, Instagram, Trash2, CheckCircle2, XCircle, MinusCircle, UserRound } from "lucide-react"
+import { MapPin, Phone, Edit, Eye, Instagram, Trash2, CheckCircle2, XCircle, MinusCircle, UserRound, SearchX } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { CATEGORIA_COLABORADOR_LABELS } from "@/lib/constants"
 
@@ -13,7 +13,7 @@ interface EmployeeCardProps {
   onView: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
-  onStatusChange: (id: string, status: 'positivado' | 'negativado' | 'nao_avaliado') => void;
+  onStatusChange: (id: string, status: 'positivado' | 'negativado' | 'nao_avaliado' | 'rede_nao_encontrada') => void;
 }
 
 export function EmployeeCard({ employee, onView, onEdit, onDelete, onStatusChange }: EmployeeCardProps) {
@@ -67,6 +67,7 @@ export function EmployeeCard({ employee, onView, onEdit, onDelete, onStatusChang
             <Button title="Positivar" variant="ghost" size="icon" onClick={() => onStatusChange(employee.id, 'positivado')} className="text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"><CheckCircle2 className="h-4 w-4" /></Button>
             <Button title="Despositivar" variant="ghost" size="icon" onClick={() => onStatusChange(employee.id, 'negativado')} className="text-red-600 hover:bg-red-50 hover:text-red-700"><XCircle className="h-4 w-4" /></Button>
             <Button title="Marcar como parcial" variant="ghost" size="icon" onClick={() => onStatusChange(employee.id, 'nao_avaliado')} className="text-amber-600 hover:bg-amber-50"><MinusCircle className="h-4 w-4" /></Button>
+            <Button title="Rede não encontrada" variant="ghost" size="icon" onClick={() => onStatusChange(employee.id, 'rede_nao_encontrada')} className="text-violet-600 hover:bg-violet-50"><SearchX className="h-4 w-4" /></Button>
           </div>
         </div>
 

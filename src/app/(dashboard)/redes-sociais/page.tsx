@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, Facebook, Instagram, MinusCircle, Search, Share2, Video, XCircle } from 'lucide-react';
+import { CheckCircle2, Facebook, Instagram, MinusCircle, Search, SearchX, Share2, Video, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { StatusBadge } from '@/components/funcionarios/status-badge';
@@ -36,11 +36,11 @@ export default function RedesSociaisPage() {
     none: employees.filter((employee) => !employee.redes_sociais?.length).length,
   };
 
-  const updateStatus = async (employee: FuncionarioCompleto, status: 'positivado' | 'negativado' | 'nao_avaliado') => {
+  const updateStatus = async (employee: FuncionarioCompleto, status: 'positivado' | 'negativado' | 'nao_avaliado' | 'rede_nao_encontrada') => {
     try {
       const updated = await changeEmployeeNetworkStatus(employee.id, status);
       if (updated) setEmployees((current) => current.map((item) => item.id === updated.id ? updated : item));
-      const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'parcial' };
+      const labels = { positivado: 'positivado', negativado: 'despositivado', nao_avaliado: 'parcial', rede_nao_encontrada: 'com a rede não encontrada' };
       toast.success(`${employee.nome} ficou ${labels[status]}.`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Não foi possível alterar a situação.');
@@ -71,7 +71,7 @@ export default function RedesSociaisPage() {
                     <NetworkCell network={facebook} />
                     <NetworkCell network={tiktok} />
                     <TableCell><StatusBadge status={employee.status_redes?.[0]?.status || 'nao_avaliado'} /></TableCell>
-                    <TableCell><div className="flex justify-end gap-1"><Button title="Positivar" variant="ghost" size="icon" onClick={() => updateStatus(employee, 'positivado')} className="text-emerald-600 hover:bg-emerald-50"><CheckCircle2 className="h-4 w-4" /></Button><Button title="Despositivar" variant="ghost" size="icon" onClick={() => updateStatus(employee, 'negativado')} className="text-red-600 hover:bg-red-50"><XCircle className="h-4 w-4" /></Button><Button title="Marcar como parcial" variant="ghost" size="icon" onClick={() => updateStatus(employee, 'nao_avaliado')} className="text-amber-600 hover:bg-amber-50"><MinusCircle className="h-4 w-4" /></Button></div></TableCell>
+                    <TableCell><div className="flex justify-end gap-1"><Button title="Positivar" variant="ghost" size="icon" onClick={() => updateStatus(employee, 'positivado')} className="text-emerald-600 hover:bg-emerald-50"><CheckCircle2 className="h-4 w-4" /></Button><Button title="Despositivar" variant="ghost" size="icon" onClick={() => updateStatus(employee, 'negativado')} className="text-red-600 hover:bg-red-50"><XCircle className="h-4 w-4" /></Button><Button title="Marcar como parcial" variant="ghost" size="icon" onClick={() => updateStatus(employee, 'nao_avaliado')} className="text-amber-600 hover:bg-amber-50"><MinusCircle className="h-4 w-4" /></Button><Button title="Rede não encontrada" variant="ghost" size="icon" onClick={() => updateStatus(employee, 'rede_nao_encontrada')} className="text-violet-600 hover:bg-violet-50"><SearchX className="h-4 w-4" /></Button></div></TableCell>
                   </TableRow>
                 ))}
                 {rows.length === 0 && <TableRow><TableCell colSpan={6} className="h-28 text-center text-muted-foreground">Nenhum colaborador cadastrado.</TableCell></TableRow>}
