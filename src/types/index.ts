@@ -1,5 +1,16 @@
 export type UserRole = 'admin' | 'operator' | 'viewer';
-export type CategoriaColaborador = 'gabinete' | 'casa' | 'vice_presidencia' | 'pmbv';
+/** Slug de uma categoria cadastrada (ex.: 'gabinete', 'casa' ou qualquer nova criada no sistema). */
+export type CategoriaColaborador = string;
+
+export interface Categoria {
+  slug: string;
+  nome: string;
+  descricao: string;
+  cor: string;
+  icone: string;
+  ordem: number;
+  ativo: boolean;
+}
 
 export interface User {
   id: string;

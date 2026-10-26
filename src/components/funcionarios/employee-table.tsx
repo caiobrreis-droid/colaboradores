@@ -15,8 +15,8 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Eye, Edit, Instagram, Map, History, Printer, ChevronLeft, ChevronRight, ArrowUpDown, Trash2, CheckCircle2, XCircle, MinusCircle, SearchX } from "lucide-react"
 import { useState } from "react"
-import { Badge } from "@/components/ui/badge"
-import { CATEGORIA_COLABORADOR_LABELS } from "@/lib/constants"
+import { CategoryBadge } from "@/components/categorias/category-chip"
+import { useCategories } from "@/hooks/use-categories"
 
 interface EmployeeTableProps {
   data: FuncionarioCompleto[];
@@ -28,6 +28,7 @@ interface EmployeeTableProps {
 
 export function EmployeeTable({ data, onView, onEdit, onDelete, onStatusChange }: EmployeeTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const { getCategory } = useCategories();
   const itemsPerPage = 10;
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
@@ -80,9 +81,7 @@ export function EmployeeTable({ data, onView, onEdit, onDelete, onStatusChange }
                     <TableCell className="font-medium text-vessel-deep">{employee.nome}</TableCell>
                     <TableCell className="text-muted-foreground">{employee.cargo}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="whitespace-nowrap border-blue-100 bg-blue-50 text-blue-700">
-                        {CATEGORIA_COLABORADOR_LABELS[employee.categoria] || 'Não informada'}
-                      </Badge>
+                      <CategoryBadge category={getCategory(employee.categoria)} fallback={employee.categoria} className="whitespace-nowrap" />
                     </TableCell>
                     <TableCell className="text-muted-foreground">{employee.endereco?.bairro || '-'}</TableCell>
                     <TableCell className="text-muted-foreground">{employee.telefone || '-'}</TableCell>

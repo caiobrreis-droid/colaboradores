@@ -1,9 +1,10 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { MapPin, Save, Upload, UserRound, X } from 'lucide-react';
+import { MapPin, Plus, Save, Upload, UserRound, X } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { CategoryDialog } from '@/components/categorias/category-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,7 +13,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CARGO_OPTIONS, CATEGORIA_COLABORADOR_OPTIONS } from '@/lib/constants';
+import { useCategories } from '@/hooks/use-categories';
+import { categoryColor, categoryIcon } from '@/lib/categories';
+import { CARGO_OPTIONS } from '@/lib/constants';
 import type { EmployeeFormValues } from '@/lib/employee-storage';
 
 interface EmployeeFormProps {
@@ -53,6 +56,10 @@ export function EmployeeForm({ initialValues, submitLabel, isSubmitting = false,
   const [values, setValues] = useState<EmployeeFormValues>(initialValues);
   const [activeTab, setActiveTab] = useState('pessoais');
   const [photoName, setPhotoName] = useState('');
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const { categories } = useCategories();
+  // Categorias inativas ficam fora do cadastro, exceto a que o colaborador já possui.
+  const categoryOptions = categories.filter((category) => category.ativo || category.slug === values.categoria);
 
   const setField = <K extends keyof EmployeeFormValues>(field: K, value: EmployeeFormValues[K]) => {
     setValues((current) => ({ ...current, [field]: value }));
@@ -145,10 +152,28 @@ export function EmployeeForm({ initialValues, submitLabel, isSubmitting = false,
                   </Select>
                 </Field>
                 <Field label="Categoria *" id="categoria">
-                  <Select value={values.categoria} onValueChange={(value) => setField('categoria', value as EmployeeFormValues['categoria'])}>
-                    <SelectTrigger id="categoria"><SelectValue placeholder="Selecione a categoria" /></SelectTrigger>
-                    <SelectContent>{CATEGORIA_COLABORADOR_OPTIONS.map(({ value, label }) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Select value={values.categoria} onValueChange={(value) => setField('categoria', value)}>
+                      <SelectTrigger id="categoria" className="flex-1"><SelectValue placeholder="Selecione a categoria" /></SelectTrigger>
+                      <SelectContent>
+                        {categoryOptions.map((category) => {
+                          const Icon = categoryIcon(category.icone);
+                          return (
+                            <SelectItem key={category.slug} value={category.slug}>
+                              <span className="flex items-center gap-2">
+                                <span className={`flex h-5 w-5 items-center justify-center rounded ${categoryColor(category.cor).chip}`}><Icon className="h-3 w-3" /></span>
+                                {category.nome}
+                              </span>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                    <Button type="button" variant="outline" size="icon" onClick={() => setCategoryDialogOpen(true)} title="Nova categoria" aria-label="Criar nova categoria">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <CategoryDialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen} onSaved={(category) => setField('categoria', category.slug)} />
                 </Field>
                 <Field label="Indicação" id="indicacao"><Input id="indicacao" value={values.indicacao} onChange={(e) => setField('indicacao', e.target.value)} placeholder="Quem indicou este colaborador" /></Field>
                 <Field label="Função" id="funcao"><Input id="funcao" value={values.funcao} onChange={(e) => setField('funcao', e.target.value)} placeholder="Função específica" /></Field>

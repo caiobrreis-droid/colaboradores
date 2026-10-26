@@ -21,7 +21,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CATEGORIA_COLABORADOR_LABELS } from '@/lib/constants';
+import { CategoryBadge } from '@/components/categorias/category-chip';
+import { useCategories } from '@/hooks/use-categories';
 import { changeEmployeeNetworkStatus, employeeAddress, fetchEmployee, removeEmployeeRecord } from '@/lib/employee-storage';
 import type { FuncionarioCompleto } from '@/types';
 
@@ -30,6 +31,7 @@ export default function EmployeeProfilePage() {
   const params = useParams();
   const id = String(params.id);
   const [employee, setEmployee] = useState<FuncionarioCompleto>();
+  const { getCategory, labelOf } = useCategories();
   const [loaded, setLoaded] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -91,7 +93,7 @@ export default function EmployeeProfilePage() {
             <h1 className="text-3xl font-bold tracking-tight text-vessel-deep">{employee.nome}</h1>
             <p className="text-lg text-muted-foreground">{employee.cargo}</p>
             <div className="flex flex-wrap items-center gap-3">
-              <Badge variant="outline" className="border-blue-100 bg-blue-50 text-blue-700">{CATEGORIA_COLABORADOR_LABELS[employee.categoria]}</Badge>
+              <CategoryBadge category={getCategory(employee.categoria)} fallback={employee.categoria} />
               <Badge variant="outline" className={employee.ativo === false ? 'border-gray-200 bg-gray-50 text-gray-600' : 'border-green-200 bg-green-50 text-green-700'}>{employee.ativo === false ? 'Inativo' : 'Ativo'}</Badge>
               <StatusBadge status={status as any} />
             </div>
@@ -138,7 +140,7 @@ export default function EmployeeProfilePage() {
                 <Info label="E-mail" value={employee.email} />
                 <Info label="Telefone" value={employee.telefone} />
                 <Info label="WhatsApp" value={employee.whatsapp} />
-                <Info label="Categoria" value={CATEGORIA_COLABORADOR_LABELS[employee.categoria]} />
+                <Info label="Categoria" value={labelOf(employee.categoria)} />
                 <Info label="Indicação" value={employee.indicacao} />
                 <Info label="Função" value={employee.funcao} />
                 <Info label="Matrícula" value={employee.matricula} />

@@ -13,7 +13,7 @@ export const employeeSchema = z.object({
   cpf: z.string().trim().max(20).default(''),
   telefone: z.string().trim().max(30).default(''),
   cargo: z.string().trim().min(1).max(120),
-  categoria: z.enum(['gabinete', 'casa', 'vice_presidencia', 'pmbv']),
+  categoria: z.string().trim().min(1).max(60),
   indicacao: z.string().trim().max(255).optional().default(''),
   ativo: z.boolean().optional().default(true),
   foto_url: z.string().max(7_500_000).optional().default(''),

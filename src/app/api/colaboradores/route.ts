@@ -27,6 +27,9 @@ function databaseError(error: unknown) {
   if ((error as { code?: string })?.code === '23505') {
     return NextResponse.json({ message: 'Já existe um colaborador cadastrado com este CPF.' }, { status: 409 });
   }
+  if ((error as { code?: string })?.code === '23503') {
+    return NextResponse.json({ message: 'A categoria escolhida não existe mais. Selecione outra.' }, { status: 400 });
+  }
   return NextResponse.json({ message: 'Não foi possível salvar o colaborador.' }, { status: 500 });
 }
 
