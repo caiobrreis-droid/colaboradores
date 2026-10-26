@@ -5,8 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { StatusBadge } from "./status-badge"
 import { Button } from "@/components/ui/button"
 import { MapPin, Phone, Edit, Eye, Instagram, Trash2, CheckCircle2, XCircle, MinusCircle, UserRound, SearchX } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { CATEGORIA_COLABORADOR_LABELS } from "@/lib/constants"
+import { CategoryBadge } from "@/components/categorias/category-chip"
+import { useCategories } from "@/hooks/use-categories"
 
 interface EmployeeCardProps {
   employee: FuncionarioCompleto;
@@ -19,6 +19,7 @@ interface EmployeeCardProps {
 export function EmployeeCard({ employee, onView, onEdit, onDelete, onStatusChange }: EmployeeCardProps) {
   const { nome, cargo, categoria, foto_url, redes_sociais, endereco, telefone, status_redes } = employee;
   const status = status_redes?.[0]?.status || 'nao_avaliado';
+  const { getCategory } = useCategories();
   const instagram = redes_sociais?.find(r => r.rede_social === 'Instagram')?.username;
 
   return (
@@ -33,9 +34,7 @@ export function EmployeeCard({ employee, onView, onEdit, onDelete, onStatusChang
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-vessel-deep truncate">{nome}</h3>
           <p className="text-sm text-muted-foreground truncate">{cargo}</p>
-          <Badge variant="outline" className="mt-2 border-blue-100 bg-blue-50 text-[10px] text-blue-700">
-            {CATEGORIA_COLABORADOR_LABELS[categoria] || 'Não informada'}
-          </Badge>
+          <CategoryBadge category={getCategory(categoria)} fallback={categoria} className="mt-2 text-[10px]" />
         </div>
       </div>
 

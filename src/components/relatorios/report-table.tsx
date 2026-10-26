@@ -3,8 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { StatusBadge } from '@/components/funcionarios/status-badge';
-import { CATEGORIA_COLABORADOR_LABELS } from '@/lib/constants';
-import type { CategoriaColaborador } from '@/types';
+import { CategoryBadge } from '@/components/categorias/category-chip';
+import { useCategories } from '@/hooks/use-categories';
 
 interface ReportTableProps {
   data: any[];
@@ -12,6 +12,7 @@ interface ReportTableProps {
 }
 
 export function ReportTable({ data, title }: ReportTableProps) {
+  const { getCategory } = useCategories();
   if (!data || data.length === 0) {
     return (
       <Card className="shadow-sm border-gray-100">
@@ -50,7 +51,7 @@ export function ReportTable({ data, title }: ReportTableProps) {
                   <TableCell className="text-gray-500">{index + 1}</TableCell>
                   <TableCell className="font-medium">{item.nome}</TableCell>
                   <TableCell>{item.cargo}</TableCell>
-                  <TableCell>{CATEGORIA_COLABORADOR_LABELS[item.categoria as CategoriaColaborador] || item.categoria}</TableCell>
+                  <TableCell><CategoryBadge category={getCategory(item.categoria)} fallback={item.categoria} className="whitespace-nowrap" /></TableCell>
                   <TableCell>{item.bairro}</TableCell>
                   <TableCell>{item.telefone}</TableCell>
                   <TableCell>{item.indicacao || '-'}</TableCell>

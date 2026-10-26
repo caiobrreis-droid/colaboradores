@@ -15,6 +15,7 @@ import {
   BarChart3,
   UserCog,
   Settings,
+  Tags,
 } from 'lucide-react';
 import { APP_NAME, APP_SUBTITLE } from '@/lib/constants';
 
@@ -26,6 +27,7 @@ interface MobileNavProps {
 const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Colaboradores', href: '/funcionarios', icon: Users },
+  { name: 'Categorias', href: '/categorias', icon: Tags },
   { name: 'Mapa da Equipe', href: '/mapa', icon: MapPin },
   { name: 'Bairros', href: '/bairros', icon: Building2 },
   { name: 'Redes Sociais', href: '/redes-sociais', icon: Share2 },

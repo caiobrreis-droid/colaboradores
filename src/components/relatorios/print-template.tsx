@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
-import { Building2, CalendarDays, House, Landmark, Printer, Star, UsersRound } from 'lucide-react';
+import { CalendarDays, Printer, UsersRound } from 'lucide-react';
 
-import { CATEGORIA_COLABORADOR_LABELS, ORGANIZATION_NAME } from '@/lib/constants';
-import type { CategoriaColaborador } from '@/types';
+import { useCategories } from '@/hooks/use-categories';
+import { categoryColor, categoryIcon } from '@/lib/categories';
+import { ORGANIZATION_NAME } from '@/lib/constants';
 
 interface PrintTemplateProps {
   data: any[];
@@ -15,14 +16,8 @@ interface PrintTemplateProps {
 
 const ROWS_PER_PAGE = 12;
 
-const categoryIcons = {
-  gabinete: Landmark,
-  casa: House,
-  vice_presidencia: Star,
-  pmbv: Building2,
-};
-
 export function PrintTemplate({ data, title }: PrintTemplateProps) {
+  const { getCategory } = useCategories();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -79,8 +74,7 @@ export function PrintTemplate({ data, title }: PrintTemplateProps) {
           .print-report-person { display: flex !important; align-items: center !important; gap: 2.2mm !important; min-width: 0 !important; }
           .print-report-avatar { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 5mm !important; height: 5mm !important; flex: 0 0 5mm !important; overflow: hidden !important; border-radius: 50% !important; background: #dbeafe !important; color: #0758e3 !important; font-size: 5.5pt !important; font-weight: 800 !important; }
           .print-report-avatar img { width: 100% !important; height: 100% !important; object-fit: cover !important; }
-          .print-category { display: inline-flex !important; align-items: center !important; gap: 1mm !important; max-width: 100% !important; padding: 0.7mm 2mm !important; border: 1px solid #b9ead0 !important; border-radius: 4mm !important; color: #07934a !important; background: #effcf5 !important; font-size: 6.2pt !important; font-weight: 700 !important; }
-          .print-category.gabinete { border-color: #bcd2ff !important; color: #0758e3 !important; background: #f0f5ff !important; }
+          .print-category { display: inline-flex !important; align-items: center !important; gap: 1mm !important; max-width: 100% !important; padding: 0.7mm 2mm !important; border: 1px solid var(--category-border, #b9ead0) !important; border-radius: 4mm !important; color: var(--category-text, #07934a) !important; background: var(--category-background, #effcf5) !important; font-size: 6.2pt !important; font-weight: 700 !important; }
           .print-category svg { width: 3.2mm !important; height: 3.2mm !important; flex: 0 0 auto !important; }
           .print-status { display: inline-block !important; min-width: 18mm !important; padding: 0.8mm 1.5mm !important; border-radius: 4mm !important; color: #ffffff !important; font-size: 5.8pt !important; font-weight: 800 !important; line-height: 1 !important; text-align: center !important; text-transform: uppercase !important; }
           .print-status.positivado { background: #11b95f !important; }
@@ -129,8 +123,14 @@ export function PrintTemplate({ data, title }: PrintTemplateProps) {
                   <tbody>
                     {pageRows.map((item, rowIndex) => {
                       const absoluteIndex = pageIndex * ROWS_PER_PAGE + rowIndex;
-                      const category = item.categoria as CategoriaColaborador;
-                      const CategoryIcon = categoryIcons[category] || Building2;
+                      const category = getCategory(item.categoria);
+                      const CategoryIcon = categoryIcon(category?.icone);
+                      const categoryPrint = categoryColor(category?.cor).print;
+                      const categoryStyle = {
+                        '--category-border': categoryPrint.border,
+                        '--category-text': categoryPrint.text,
+                        '--category-background': categoryPrint.background,
+                      } as CSSProperties;
                       const statusClass = item.situacao === 'Rede não encontrada'
                         ? 'rede-nao-encontrada'
                         : String(item.situacao || 'Parcial').toLocaleLowerCase('pt-BR');
@@ -140,7 +140,7 @@ export function PrintTemplate({ data, title }: PrintTemplateProps) {
                           <td>{absoluteIndex + 1}</td>
                           <td><span className="print-report-person"><span className="print-report-avatar">{item.foto_url ? <Image src={item.foto_url} alt="" width={28} height={28} unoptimized /> : initials}</span><span>{item.nome}</span></span></td>
                           <td>{item.cargo || '—'}</td>
-                          <td><span className={`print-category ${category}`}><CategoryIcon />{CATEGORIA_COLABORADOR_LABELS[category] || item.categoria}</span></td>
+                          <td><span className="print-category" style={categoryStyle}><CategoryIcon />{category?.nome || item.categoria}</span></td>
                           <td>{item.bairro || '—'}</td>
                           <td>{item.telefone || '—'}</td>
                           <td>{item.indicacao || '—'}</td>

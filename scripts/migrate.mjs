@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import bcrypt from 'bcryptjs';
@@ -10,15 +10,19 @@ if (!databaseUrl) {
 }
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
-const migrationPath = path.join(currentDirectory, '..', 'db', 'migrations', '001_railway_schema.sql');
-const migration = await readFile(migrationPath, 'utf8');
+const migrationsDirectory = path.join(currentDirectory, '..', 'db', 'migrations');
+// As migrações são idempotentes e rodam todas, em ordem, a cada deploy.
+const migrationFiles = (await readdir(migrationsDirectory)).filter((file) => file.endsWith('.sql')).sort();
 const pool = new pg.Pool({
   connectionString: databaseUrl,
   ssl: databaseUrl.includes('localhost') ? false : { rejectUnauthorized: false },
 });
 
 try {
-  await pool.query(migration);
+  for (const file of migrationFiles) {
+    await pool.query(await readFile(path.join(migrationsDirectory, file), 'utf8'));
+    console.log(`Migração aplicada: ${file}`);
+  }
 
   const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
   const adminPassword = process.env.ADMIN_PASSWORD;

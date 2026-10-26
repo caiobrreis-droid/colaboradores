@@ -6,21 +6,17 @@ import { ReportTable } from '@/components/relatorios/report-table';
 import { PrintTemplate } from '@/components/relatorios/print-template';
 import { Button } from '@/components/ui/button';
 import { exportToExcel, exportToCSV, printReport } from '@/lib/export-utils';
-import { BriefcaseBusiness, Building2, FileDown, FileSpreadsheet, FileText, House, Landmark, Printer } from 'lucide-react';
-import { CATEGORIA_COLABORADOR_LABELS, CATEGORIA_COLABORADOR_OPTIONS } from '@/lib/constants';
+import { FileDown, FileSpreadsheet, FileText, Printer } from 'lucide-react';
+import { useCategories } from '@/hooks/use-categories';
+import { categoryColor, categoryIcon } from '@/lib/categories';
+import { cn } from '@/lib/utils';
 import type { CategoriaColaborador, FuncionarioCompleto } from '@/types';
 import { fetchEmployees } from '@/lib/employee-storage';
 import { toast } from 'sonner';
 
-const CATEGORY_ICONS = {
-  gabinete: Landmark,
-  casa: House,
-  vice_presidencia: BriefcaseBusiness,
-  pmbv: Building2,
-};
-
 export default function RelatoriosPage() {
   const [employees, setEmployees] = useState<FuncionarioCompleto[]>([]);
+  const { categories, labelOf } = useCategories();
   const [reportData, setReportData] = useState<any[]>([]);
   const [reportTitle, setReportTitle] = useState('Relatório Geral');
   const [hasGenerated, setHasGenerated] = useState(false);
@@ -73,7 +69,7 @@ export default function RelatoriosPage() {
     if (filters.tipo === 'inativos') filtered = filtered.filter((item) => !item.ativo);
 
     const title = filters.categoria
-      ? `Relatório de Colaboradores — ${CATEGORIA_COLABORADOR_LABELS[filters.categoria as CategoriaColaborador]}`
+      ? `Relatório de Colaboradores — ${labelOf(filters.categoria)}`
       : 'Relatório Geral de Colaboradores';
     setReportTitle(title);
     setReportData(filtered);
@@ -83,10 +79,10 @@ export default function RelatoriosPage() {
   const handleCategoryPrint = (categoria: CategoriaColaborador) => {
     const filtered = allData.filter((item) => item.categoria === categoria);
     if (filtered.length === 0) {
-      toast.info(`Não há colaboradores em ${CATEGORIA_COLABORADOR_LABELS[categoria]} para imprimir.`);
+      toast.info(`Não há colaboradores em ${labelOf(categoria)} para imprimir.`);
       return;
     }
-    setReportTitle(`Relatório de Colaboradores — ${CATEGORIA_COLABORADOR_LABELS[categoria]}`);
+    setReportTitle(`Relatório de Colaboradores — ${labelOf(categoria)}`);
     setReportData(filtered);
     setHasGenerated(true);
     window.setTimeout(() => printReport(), 150);
@@ -108,14 +104,14 @@ export default function RelatoriosPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {CATEGORIA_COLABORADOR_OPTIONS.map(({ value, label }) => {
-          const Icon = CATEGORY_ICONS[value];
+        {categories.filter((category) => category.ativo || allData.some((item) => item.categoria === category.slug)).map(({ slug: value, nome: label, cor, icone }) => {
+          const Icon = categoryIcon(icone);
           const total = allData.filter((item) => item.categoria === value).length;
 
           return (
             <div key={value} className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
               <div className="flex items-start justify-between gap-4">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-vessel-blue">
+                <span className={cn('flex h-11 w-11 items-center justify-center rounded-xl', categoryColor(cor).chip)}>
                   <Icon className="h-5 w-5" />
                 </span>
                 <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">{total} registros</span>
@@ -140,11 +136,11 @@ export default function RelatoriosPage() {
               <FileText className="w-4 h-4 mr-2 text-red-500" />
               PDF
             </Button>
-            <Button variant="outline" className="bg-white hover:bg-gray-50 border-gray-200" onClick={() => exportToExcel(reportData.map((item) => ({ ...item, categoria: CATEGORIA_COLABORADOR_LABELS[item.categoria as CategoriaColaborador] || item.categoria })), 'relatorio_vessel')}>
+            <Button variant="outline" className="bg-white hover:bg-gray-50 border-gray-200" onClick={() => exportToExcel(reportData.map((item) => ({ ...item, categoria: labelOf(item.categoria) })), 'relatorio_vessel')}>
               <FileSpreadsheet className="w-4 h-4 mr-2 text-green-600" />
               Excel
             </Button>
-            <Button variant="outline" className="bg-white hover:bg-gray-50 border-gray-200" onClick={() => exportToCSV(reportData.map((item) => ({ ...item, categoria: CATEGORIA_COLABORADOR_LABELS[item.categoria as CategoriaColaborador] || item.categoria })), 'relatorio_vessel')}>
+            <Button variant="outline" className="bg-white hover:bg-gray-50 border-gray-200" onClick={() => exportToCSV(reportData.map((item) => ({ ...item, categoria: labelOf(item.categoria) })), 'relatorio_vessel')}>
               <FileDown className="w-4 h-4 mr-2 text-blue-500" />
               CSV
             </Button>

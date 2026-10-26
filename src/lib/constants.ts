@@ -3,16 +3,7 @@ export const APP_SUBTITLE = 'Gestão de Colaboradores';
 export const APP_TAGLINE = 'Organização • Pessoas • Informação • Resultado';
 export const ORGANIZATION_NAME = 'Gestão Integrada de Colaboradores';
 
-export const CATEGORIA_COLABORADOR_OPTIONS = [
-  { value: 'gabinete', label: 'Gabinete' },
-  { value: 'casa', label: 'Casa' },
-  { value: 'vice_presidencia', label: 'Vice-Presidência' },
-  { value: 'pmbv', label: 'PMBV' },
-] as const;
-
-export const CATEGORIA_COLABORADOR_LABELS = Object.fromEntries(
-  CATEGORIA_COLABORADOR_OPTIONS.map(({ value, label }) => [value, label]),
-) as Record<(typeof CATEGORIA_COLABORADOR_OPTIONS)[number]['value'], string>;
+// As categorias de colaboradores agora são cadastradas no sistema: veja src/lib/categories.ts.
 
 export const STATUS_OPTIONS = [
   { value: 'positivado', label: 'Positivado' },

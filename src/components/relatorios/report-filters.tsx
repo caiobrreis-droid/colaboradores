@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { CARGO_OPTIONS, BAIRROS_BOA_VISTA, CATEGORIA_COLABORADOR_OPTIONS } from '@/lib/constants';
+import { useCategories } from '@/hooks/use-categories';
+import { CARGO_OPTIONS, BAIRROS_BOA_VISTA } from '@/lib/constants';
 
 interface ReportFiltersProps {
   onGenerate: (filters: any) => void;
@@ -17,6 +18,7 @@ export function ReportFilters({ onGenerate }: ReportFiltersProps) {
   const [bairro, setBairro] = useState('');
   const [cargo, setCargo] = useState('');
   const [categoria, setCategoria] = useState('');
+  const { categories } = useCategories();
   const [dataInicial, setDataInicial] = useState('');
   const [dataFinal, setDataFinal] = useState('');
 
@@ -101,7 +103,7 @@ export function ReportFilters({ onGenerate }: ReportFiltersProps) {
                   <SelectValue placeholder="Selecione a categoria" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIA_COLABORADOR_OPTIONS.map(({ value, label }) => (
+                  {categories.map(({ slug: value, nome: label }) => (
                     <SelectItem key={value} value={value}>{label}</SelectItem>
                   ))}
                 </SelectContent>

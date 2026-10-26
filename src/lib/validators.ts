@@ -13,7 +13,7 @@ export const funcionarioSchema = z.object({
   telefone: z.string().min(10, "Telefone inválido"),
   email: z.string().email("E-mail inválido").optional().or(z.literal("")),
   cargo: z.string().min(1, "Cargo é obrigatório"),
-  categoria: z.enum(["gabinete", "casa", "vice_presidencia", "pmbv"]),
+  categoria: z.string().min(1, "Categoria é obrigatória"),
   foto_url: z.string().optional(),
   observacoes: z.string().optional(),
 });

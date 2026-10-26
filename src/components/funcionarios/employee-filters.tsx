@@ -10,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { BAIRROS_BOA_VISTA, CARGO_OPTIONS, CATEGORIA_COLABORADOR_OPTIONS } from "@/lib/constants"
+import { useCategories } from "@/hooks/use-categories"
+import { BAIRROS_BOA_VISTA, CARGO_OPTIONS } from "@/lib/constants"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 
@@ -31,6 +32,7 @@ interface EmployeeFiltersProps {
 
 export function EmployeeFilters({ filters, onFilterChange }: EmployeeFiltersProps) {
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const { categories } = useCategories()
 
   const updateFilter = (key: keyof EmployeeFiltersState, value: string) => {
     onFilterChange({ ...filters, [key]: value })
@@ -79,8 +81,8 @@ export function EmployeeFilters({ filters, onFilterChange }: EmployeeFiltersProp
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas as categorias</SelectItem>
-              {CATEGORIA_COLABORADOR_OPTIONS.map(({ value, label }) => (
-                <SelectItem key={value} value={value}>{label}</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category.slug} value={category.slug}>{category.nome}</SelectItem>
               ))}
             </SelectContent>
           </Select>

@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { CATEGORIA_COLABORADOR_LABELS } from '@/lib/constants';
+import { useCategories } from '@/hooks/use-categories';
 import { employeeAddress, fetchEmployees } from '@/lib/employee-storage';
 import type { FuncionarioCompleto } from '@/types';
 
@@ -16,6 +16,7 @@ export default function MapaPage() {
   const [employees, setEmployees] = useState<FuncionarioCompleto[]>([]);
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState('');
+  const { labelOf } = useCategories();
 
   useEffect(() => {
     void fetchEmployees().then((loaded) => {
@@ -82,7 +83,7 @@ export default function MapaPage() {
                   <Avatar className="h-11 w-11 shrink-0"><AvatarImage src={employee.foto_url} alt={employee.nome} /><AvatarFallback className="bg-blue-100 text-xs font-bold text-vessel-blue">{initials}</AvatarFallback></Avatar>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold text-vessel-deep">{employee.nome}</p>
-                    <p className="truncate text-sm text-muted-foreground">{employee.cargo} • {CATEGORIA_COLABORADOR_LABELS[employee.categoria]}</p>
+                    <p className="truncate text-sm text-muted-foreground">{employee.cargo} • {labelOf(employee.categoria)}</p>
                     <p className={`mt-1 flex items-start gap-1 text-xs ${address ? 'text-slate-500' : 'font-medium text-amber-600'}`}><MapPin className="mt-0.5 h-3 w-3 shrink-0" />{address || 'Endereço não cadastrado'}</p>
                   </div>
                 </div>
